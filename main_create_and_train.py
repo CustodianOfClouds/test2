@@ -13,7 +13,7 @@ from activation_functions import ActivationFunction
 ############################################################################################################
 # CONFIGURATION SELECTOR - Change this number to select which model to train (1-7)
 ############################################################################################################
-CONFIG_TO_RUN = 7
+CONFIG_TO_RUN = 3
 
 ############################################################################################################
 # CONFIGURATION DEFINITIONS
@@ -40,24 +40,24 @@ def get_configuration(config_num):
             'layers': lambda: [
                 Layer(3, 3, 'input'),
                 Layer(3, 10, 'hidden',
-                      activation_func=ActivationFunction.leaky_relu,
-                      activation_params={'alpha': 0.01},
-                      weight_init='normal', weight_init_params={'std': 0.01},
-                      bias_init='zeros'),
+                      activation_func=ActivationFunction.leaky_relu, # defaults to leaky relu, we could have omitted this
+                      activation_params={'alpha': 0.01}, # leaky relu defaults to 0.01, we could have omitted this
+                      weight_init='normal', weight_init_params={'std': 0.01}, # the init std of 0.01 is default, we could have omitted
+                      bias_init='zeros'), # we can omit this, as default is 'zeros'
                 Layer(10, 5, 'hidden',
                       activation_func=ActivationFunction.leaky_relu,
                       activation_params={'alpha': 0.01},
                       weight_init='normal', weight_init_params={'std': 0.01},
                       bias_init='zeros'),
                 Layer(5, 2, 'output',
-                      activation_func=ActivationFunction.tanh)
+                      activation_func=ActivationFunction.tanh) # default, we didnt need to specify tbh
             ],
             'data_file': 'color_data.json',
             'input_key': 'RGB_Values',
             'output_key': 'Is_Red',
             'learning_rate': 0.0001,
             'num_epochs': 500,
-            'num_samples': 600,
+            'num_samples': 800,
             'cost_function': 'mae',
             'save_file': 'model_red.json'
         },
@@ -74,7 +74,7 @@ def get_configuration(config_num):
                 Layer(2, 2, 'input'),
                 Layer(2, 6, 'hidden',
                       activation_func=ActivationFunction.relu,
-                      weight_init='he',
+                      weight_init='he', # this is default, could have omitted
                       bias_init='zeros'),
                 Layer(6, 4, 'hidden',
                       activation_func=ActivationFunction.leaky_relu,
@@ -89,7 +89,7 @@ def get_configuration(config_num):
             'output_key': 'Output_Values',
             'learning_rate': 0.001,
             'num_epochs': 500,
-            'num_samples': 600,
+            'num_samples': 700,
             'cost_function': 'mse',
             'save_file': 'model_xor.json'
         },
@@ -106,17 +106,17 @@ def get_configuration(config_num):
                 Layer(2, 2, 'input'),
                 Layer(2, 16, 'hidden',
                       activation_func=ActivationFunction.gelu,
-                      weight_init='uniform_xavier',
+                      weight_init='uniform_xavier', # tbh here he is still the most optimal choice, not uniform xav
                       bias_init='constant', bias_init_params={'value': 0.1}),
                 Layer(16, 12, 'hidden',
                       activation_func=ActivationFunction.swish,
                       activation_params={'alpha': 1.0},
-                      weight_init='uniform_xavier',
-                      bias_init='constant', bias_init_params={'value': 0.1}),
+                      weight_init='he',
+                      bias_init='constant', bias_init_params={'value': 0.05}),
                 Layer(12, 8, 'hidden',
                       activation_func=ActivationFunction.swish,
                       activation_params={'alpha': 1.0},
-                      weight_init='uniform_xavier',
+                      weight_init='he',
                       bias_init='zeros'),
                 Layer(8, 2, 'output',
                       activation_func=ActivationFunction.sigmoid)  # Sigmoid for Binary CE
@@ -125,9 +125,9 @@ def get_configuration(config_num):
             'input_key': 'Input_Values',
             'output_key': 'Output_Values',
             'learning_rate': 0.0001,
-            'num_epochs': 5000,
-            'num_samples': 600,
-            'cost_function': 'binary_crossentropy',
+            'num_epochs': 3000,
+            'num_samples': 800,
+            'cost_function': 'binary_crossentropy', # using binCE requires outputs/data to be 0 to 1, not -1 to 1 like I've been doing
             'save_file': 'model_sine.json'
         },
 
@@ -310,15 +310,10 @@ print(f"Cost function: {config['cost_function']}")
 print()
 
 # Create a Training object
-training = Training(neural_net,
-                   learning_rate=config['learning_rate'],
-                   clip_value=5,
-                   cost_function=config['cost_function'])
+training = Training(neural_net, learning_rate=config['learning_rate'], clip_value=5, cost_function=config['cost_function'], checkpoint_path=config.get('checkpoint_path'))
 
 # Train the neural network
-training.train(input_data, target_data,
-              epochs=config['num_epochs'],
-              samples_per_epoch=config['num_samples'])
+training.train(input_data, target_data, epochs=config['num_epochs'], samples_per_epoch=config['num_samples'])
 
 # Save the neural net
 save_file = os.path.join(os.path.dirname(__file__), "models", config['save_file'])
