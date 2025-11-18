@@ -11,7 +11,7 @@ from training import Training
 ############################################################################################################
 # CONFIGURATION SELECTOR - Change this number to select which model to continue training (1-7)
 ############################################################################################################
-CONFIG_TO_RUN = 7
+CONFIG_TO_RUN = 3
 
 ############################################################################################################
 # CONFIGURATION DEFINITIONS
@@ -33,8 +33,9 @@ def get_configuration(config_num):
             'learning_rate': 0.00005,  # Lower LR for fine-tuning
             'clip_value': 4,
             'num_epochs': 300,
-            'num_samples': 700,
-            'cost_function': 'mae',
+            'num_samples': 900,
+            'cost_function': 'mse', # we initially trained with mae, but we can switch cost functions! Now mse :) 
+            # like we can switch between mse ⟷ mae, but switching to or from a CE is trickly, refer to readme!!
         },
 
         2: {
@@ -46,8 +47,8 @@ def get_configuration(config_num):
             'learning_rate': 0.0005,
             'clip_value': 4,
             'num_epochs': 300,
-            'num_samples': 700,
-            'cost_function': 'mse',
+            'num_samples': 900,
+            'cost_function': 'mse', # technically you can put `None` which defaults to `'mse'`. 
         },
 
         3: {
@@ -59,7 +60,7 @@ def get_configuration(config_num):
             'learning_rate': 0.00005,
             'clip_value': 4,
             'num_epochs': 500,
-            'num_samples': 700,
+            'num_samples': 900,
             'cost_function': 'binary_crossentropy',
         },
 
@@ -168,15 +169,10 @@ print(f"Cost function: {config['cost_function']}")
 print()
 
 # Create a Training object with LOWER learning rate for fine-tuning
-training = Training(neural_net,
-                   learning_rate=config['learning_rate'],
-                   clip_value=config['clip_value'],
-                   cost_function=config['cost_function'])
+training = Training(neural_net, learning_rate=config['learning_rate'], clip_value=config['clip_value'], cost_function=config['cost_function'])
 
 # Continue training
-training.train(input_data, target_data,
-              epochs=config['num_epochs'],
-              samples_per_epoch=config['num_samples'])
+training.train(input_data, target_data, epochs=config['num_epochs'], samples_per_epoch=config['num_samples'])
 
 # Save the updated model (overwrites the old one)
 neural_net.save(model_file)
