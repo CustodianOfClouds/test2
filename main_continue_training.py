@@ -34,7 +34,7 @@ def get_configuration(config_num):
             'clip_value': 4,
             'num_epochs': 300,
             'num_samples': 900,
-            'cost_function': 'mse', # we initially trained with mae, but we can switch cost functions! Now mse :) 
+            'cost_function': 'mse' # we initially trained with mae, but we can switch cost functions! Now mse :)
             # like we can switch between mse ⟷ mae, but switching to or from a CE is trickly, refer to readme!!
         },
 
@@ -61,8 +61,7 @@ def get_configuration(config_num):
             'clip_value': 4,
             'num_epochs': 500,
             'num_samples': 900,
-            'cost_function': 'binary_crossentropy',
-            'checkpoint_path': 'model_sine.json'  # Save best during continue training
+            'cost_function': 'binary_crossentropy'
         },
 
         4: {
@@ -170,26 +169,17 @@ print(f"Cost function: {config['cost_function']}")
 print()
 
 # Create a Training object with LOWER learning rate for fine-tuning
-training = Training(neural_net, learning_rate=config['learning_rate'], clip_value=config['clip_value'], cost_function=config['cost_function'], checkpoint_path=config.get('checkpoint_path'))
+# Use model_file as checkpoint to save best version during continue training
+training = Training(neural_net, learning_rate=config['learning_rate'], clip_value=config['clip_value'], cost_function=config['cost_function'], checkpoint_path=model_file)
 
 # Continue training
 training.train(input_data, target_data, epochs=config['num_epochs'], samples_per_epoch=config['num_samples'])
 
-# Save the updated model (skip if checkpoint was used - best model already saved)
-if training.checkpoint_path is None:
-    # No checkpointing used, save final model
-    neural_net.save(model_file)
-    print()
-    print("=" * 70)
-    print(f"Continue-training complete! Updated model saved to {config['model_file']}")
-    print("=" * 70)
-else:
-    # Checkpointing was used, best model already saved during training
-    print()
-    print("=" * 70)
-    print(f"Continue-training complete! Best model already saved to {config['model_file']}")
-    print(f"Best cost achieved: {training.best_cost:.6f}")
-    print("=" * 70)
-
+# Best model already saved during training via checkpoint
+print()
+print("=" * 70)
+print(f"Continue-training complete! Best model saved to {config['model_file']}")
+print(f"Best cost achieved: {training.best_cost:.6f}")
+print("=" * 70)
 print()
 print("TIP: Run main_load.py to see if performance improved")

@@ -128,8 +128,7 @@ def get_configuration(config_num):
             'num_epochs': 3000,
             'num_samples': 800,
             'cost_function': 'binary_crossentropy', # using binCE requires outputs/data to be 0 to 1, not -1 to 1 like I've been doing
-            'save_file': 'model_sine.json',
-            'checkpoint_path': 'model_sine.json'  # Same path = checkpoint saves best, skip final save
+            'save_file': 'model_sine.json'
         },
 
         ############################################################################################################
@@ -310,25 +309,16 @@ print(f"Epochs: {config['num_epochs']}")
 print(f"Cost function: {config['cost_function']}")
 print()
 
-# Create a Training object
-training = Training(neural_net, learning_rate=config['learning_rate'], clip_value=5, cost_function=config['cost_function'], checkpoint_path=config.get('checkpoint_path'))
+# Create a Training object with checkpointing (saves best model to save_file)
+save_file_path = os.path.join(os.path.dirname(__file__), "models", config['save_file'])
+training = Training(neural_net, learning_rate=config['learning_rate'], clip_value=5, cost_function=config['cost_function'], checkpoint_path=save_file_path)
 
 # Train the neural network
 training.train(input_data, target_data, epochs=config['num_epochs'], samples_per_epoch=config['num_samples'])
 
-# Save the neural net (skip if checkpoint was used - best model already saved)
-save_file = os.path.join(os.path.dirname(__file__), "models", config['save_file'])
-if training.checkpoint_path is None:
-    # No checkpointing used, save final model
-    neural_net.save(save_file)
-    print()
-    print("=" * 70)
-    print(f"Training complete! Model saved to {config['save_file']}")
-    print("=" * 70)
-else:
-    # Checkpointing was used, best model already saved during training
-    print()
-    print("=" * 70)
-    print(f"Training complete! Best model already saved to {config['save_file']}")
-    print(f"Best cost achieved: {training.best_cost:.6f}")
-    print("=" * 70)
+# Best model already saved during training via checkpoint
+print()
+print("=" * 70)
+print(f"Training complete! Best model saved to {config['save_file']}")
+print(f"Best cost achieved: {training.best_cost:.6f}")
+print("=" * 70)
