@@ -686,6 +686,41 @@ This works correctly for element-wise activations like:
 ### Implementation Note
 The softmax + CE special case is implemented in `src/training.py` in the `firstTwoDerivativesOfOutputLayer()` method. The detection is automatic - you don't need to do anything special. Just choose the right cost function and output activation.
 
+### Switching Cost Functions During Training
+
+**You CAN switch cost functions when continuing training from a saved model:**
+
+```python
+# Initial training with MAE
+trainer = Training(net, learning_rate=0.01, clip_value=5, cost_function='mae')
+trainer.train(input_data, target_data, epochs=500)
+net.save('model.json')
+
+# Continue training with MSE
+loaded_net = NeuralNet()
+loaded_net.load('model.json')
+trainer2 = Training(loaded_net, learning_rate=0.01, clip_value=5, cost_function='mse')  # Different!
+trainer2.train(input_data, target_data, epochs=500)
+```
+
+**Why this works:**
+- Cost functions are properties of the `Training` object, not the `NeuralNet`
+- Saved models only contain weights, biases, and architecture - no cost function
+- When you create a new `Training` object, you can choose any compatible cost function
+
+**Restrictions:**
+- The same activation/cost compatibility rules still apply (see Compatibility Matrix)
+- ❌ Can't switch TO binary_crossentropy unless output is sigmoid
+- ❌ Can't switch TO categorical_crossentropy unless output is softmax
+- ❌ Can't switch FROM softmax to anything except categorical_crossentropy
+- ✅ Can freely switch between MSE ⟷ MAE for any activation
+
+**Practical use case:**
+1. **Start with MAE** (robust to outliers, gets "close enough")
+2. **Switch to MSE** (fine-tunes, penalizes large errors more heavily)
+
+This is a legitimate training strategy - MAE is less sensitive to outliers early on, then MSE polishes the fit.
+
 ### Important Limitations
 
 **CRITICAL: Refer to the Compatibility Matrix above before choosing combinations!**
