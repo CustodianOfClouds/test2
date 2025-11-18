@@ -22,21 +22,18 @@ CONFIG_TO_RUN = 7
 def get_configuration(config_num):
     """
     Returns the configuration for the specified config number.
-    Each config demonstrates a coherent combination of techniques that work well together:
-    - Consistent activation functions throughout hidden layers
-    - Appropriate weight initialization for the activation family
-    - Suitable cost function for the task type
+    Each config showcases ALL activation functions by grouping compatible families together.
     """
 
     configs = {
         ############################################################################################################
-        # CONFIG 1: RGB Red Color Classification - NORMAL INITIALIZATION SHOWCASE
+        # CONFIG 1: CLASSIC TANH - SHOWCASE NORMAL INITIALIZATION
         ############################################################################################################
         1: {
             'name': 'RGB Red Color Classification',
             'description': 'Classify RGB colors as "red" or "not red"',
             'architecture': '3 → 10 → 5 → 2',
-            'details': 'Normal init (std=0.01) + Tanh throughout + MAE cost',
+            'details': 'Pure Tanh + Normal init (std=0.01) + MAE',
             'layers': lambda: [
                 Layer(3, 3, 'input'),
                 Layer(3, 10, 'hidden',
@@ -61,18 +58,17 @@ def get_configuration(config_num):
         },
 
         ############################################################################################################
-        # CONFIG 2: XOR Problem - LEAKY RELU + HE INITIALIZATION
+        # CONFIG 2: RELU FAMILY PROGRESSION - ReLU -> Leaky ReLU -> ELU
         ############################################################################################################
         2: {
             'name': 'XOR Problem',
             'description': 'Learn XOR function (proves you need hidden layers!)',
             'architecture': '2 → 6 → 4 → 2',
-            'details': 'Leaky ReLU (0.01) throughout + He init + Tanh output + MSE',
+            'details': 'ReLU -> Leaky ReLU -> ELU progression + He init + MSE',
             'layers': lambda: [
                 Layer(2, 2, 'input'),
                 Layer(2, 6, 'hidden',
-                      activation_func=ActivationFunction.leaky_relu,
-                      activation_params={'alpha': 0.01},
+                      activation_func=ActivationFunction.relu,
                       weight_init='he',
                       bias_init='zeros'),
                 Layer(6, 4, 'hidden',
@@ -94,25 +90,25 @@ def get_configuration(config_num):
         },
 
         ############################################################################################################
-        # CONFIG 3: Sine Wave Classification - SIGMOID/TANH FAMILY + BINARY CROSSENTROPY
+        # CONFIG 3: SIGMOID THROUGHOUT - BINARY CROSSENTROPY
         ############################################################################################################
         3: {
             'name': 'Sine Wave Classification',
             'description': 'Classify points as above or below y = sin(x)',
             'architecture': '2 → 16 → 12 → 8 → 2',
-            'details': 'Tanh hidden + Sigmoid output + Xavier init + Binary CE',
+            'details': 'Sigmoid throughout + Xavier init + Binary CE',
             'layers': lambda: [
                 Layer(2, 2, 'input'),
                 Layer(2, 16, 'hidden',
-                      activation_func=ActivationFunction.tanh,
+                      activation_func=ActivationFunction.sigmoid,
                       weight_init='xavier',
                       bias_init='zeros'),
                 Layer(16, 12, 'hidden',
-                      activation_func=ActivationFunction.tanh,
+                      activation_func=ActivationFunction.sigmoid,
                       weight_init='xavier',
                       bias_init='zeros'),
                 Layer(12, 8, 'hidden',
-                      activation_func=ActivationFunction.tanh,
+                      activation_func=ActivationFunction.sigmoid,
                       weight_init='xavier',
                       bias_init='zeros'),
                 Layer(8, 2, 'output',
@@ -129,18 +125,18 @@ def get_configuration(config_num):
         },
 
         ############################################################################################################
-        # CONFIG 4: Checkerboard Pattern - ELU + HE INITIALIZATION
+        # CONFIG 4: SELU + ELU FAMILY (both exponential-based)
         ############################################################################################################
         4: {
             'name': 'Checkerboard Pattern',
             'description': 'Classify grid squares as black or white (chess board)',
             'architecture': '2 → 20 → 16 → 12 → 2',
-            'details': 'ELU throughout + He init + Tanh output + MSE',
+            'details': 'SELU -> ELU -> ELU progression + He init + MSE',
             'layers': lambda: [
                 Layer(2, 2, 'input'),
                 Layer(2, 20, 'hidden',
-                      activation_func=ActivationFunction.elu,
-                      activation_params={'alpha': 1.0},
+                      activation_func=ActivationFunction.selu,
+                      activation_params={'alpha': 1.67326324, 'scale': 1.05070098},
                       weight_init='he',
                       bias_init='zeros'),
                 Layer(20, 16, 'hidden',
@@ -167,13 +163,13 @@ def get_configuration(config_num):
         },
 
         ############################################################################################################
-        # CONFIG 5: Quadrant Classification - GELU + XAVIER INITIALIZATION
+        # CONFIG 5: MODERN SMOOTH TRIO - GELU -> Swish -> Mish
         ############################################################################################################
         5: {
             'name': 'Quadrant Classification (MULTI-CLASS)',
             'description': 'Classify which quadrant a point is in (4 classes)',
             'architecture': '2 → 12 → 10 → 4',
-            'details': 'GELU throughout + Xavier init + Tanh output + MAE',
+            'details': 'GELU -> Swish -> Mish progression (modern activations) + Xavier + MAE',
             'layers': lambda: [
                 Layer(2, 2, 'input'),
                 Layer(2, 12, 'hidden',
@@ -181,7 +177,8 @@ def get_configuration(config_num):
                       weight_init='xavier',
                       bias_init='zeros'),
                 Layer(12, 10, 'hidden',
-                      activation_func=ActivationFunction.gelu,
+                      activation_func=ActivationFunction.swish,
+                      activation_params={'alpha': 1.0},
                       weight_init='xavier',
                       bias_init='zeros'),
                 Layer(10, 4, 'output',
@@ -198,18 +195,18 @@ def get_configuration(config_num):
         },
 
         ############################################################################################################
-        # CONFIG 6: House Price Regression - SWISH + LINEAR OUTPUT
+        # CONFIG 6: PARAMETRIC ELU + SWISH - LINEAR OUTPUT FOR REGRESSION
         ############################################################################################################
         6: {
             'name': 'House Price Regression (LINEAR OUTPUT)',
             'description': 'Predict house prices (regression with unbounded outputs)',
             'architecture': '3 → 12 → 10 → 1',
-            'details': 'Swish (alpha=1.0) throughout + He init + Linear output + MSE',
+            'details': 'Parametric ELU -> Swish + He init + Linear output + MSE',
             'layers': lambda: [
                 Layer(3, 3, 'input'),
                 Layer(3, 12, 'hidden',
-                      activation_func=ActivationFunction.swish,
-                      activation_params={'alpha': 1.0},
+                      activation_func=ActivationFunction.parametric_elu,
+                      activation_params={'alpha': 1.5, 'beta': 1.0},
                       weight_init='he',
                       bias_init='zeros'),
                 Layer(12, 10, 'hidden',
@@ -231,13 +228,13 @@ def get_configuration(config_num):
         },
 
         ############################################################################################################
-        # CONFIG 7: Iris Flower Classification - MISH + SOFTMAX + CATEGORICAL CE
+        # CONFIG 7: MISH + GELU - SOFTMAX + CATEGORICAL CE
         ############################################################################################################
         7: {
             'name': 'Iris Flower Classification (SOFTMAX + CATEGORICAL CE)',
             'description': 'Classify iris flowers into 3 species',
             'architecture': '4 → 14 → 10 → 3',
-            'details': 'Mish throughout + He init + Softmax output + Categorical CE',
+            'details': 'Mish -> GELU progression + He init + Softmax + Categorical CE',
             'layers': lambda: [
                 Layer(4, 4, 'input'),
                 Layer(4, 14, 'hidden',
@@ -245,7 +242,7 @@ def get_configuration(config_num):
                       weight_init='he',
                       bias_init='zeros'),
                 Layer(14, 10, 'hidden',
-                      activation_func=ActivationFunction.mish,
+                      activation_func=ActivationFunction.gelu,
                       weight_init='he',
                       bias_init='zeros'),
                 Layer(10, 3, 'output',
