@@ -16,77 +16,76 @@ class Training:
 
         # Validate cost function and output activation pairing
         # This prevents silent gradient errors from incompatible combinations
-        if len(neural_net.layers) > 0:
-            output_layer = neural_net.layers[-1]
-            output_activation = output_layer.activation_func.title
+        output_layer = neural_net.layers[-1]
+        output_activation = output_layer.activation_func.title
 
-            # RULE 1: Binary Cross-Entropy REQUIRES Sigmoid activation
-            if self.cost_function == 'binary_crossentropy':
-                if output_activation != 'sigmoid':
-                    raise ValueError(
-                        f"Binary cross-entropy loss REQUIRES sigmoid output activation.\n"
-                        f"Current output activation: '{output_activation}'\n"
-                        f"\n"
-                        f"Why this error:\n"
-                        f"  - Binary CE expects outputs in [0, 1] range (probabilities)\n"
-                        f"  - Sigmoid naturally produces [0, 1] outputs\n"
-                        f"  - Tanh produces [-1, 1] (negative values get clipped, wrong gradients)\n"
-                        f"  - ReLU/Leaky ReLU/ELU are unbounded (breaks probability interpretation)\n"
-                        f"\n"
-                        f"Fix:\n"
-                        f"  output_layer = Layer(..., 'output', activation_func=ActivationFunction.sigmoid)\n"
-                        f"  training = Training(net, lr, clip, cost_function='binary_crossentropy')\n"
-                        f"\n"
-                        f"Alternative:\n"
-                        f"  - Use MSE or MAE with tanh (for [-1, 1] data)\n"
-                        f"  - Use categorical_crossentropy with softmax (for multi-class)\n"
-                    )
+        # RULE 1: Binary Cross-Entropy REQUIRES Sigmoid activation
+        if self.cost_function == 'binary_crossentropy':
+            if output_activation != 'sigmoid':
+                raise ValueError(
+                    f"Binary cross-entropy loss REQUIRES sigmoid output activation.\n"
+                    f"Current output activation: '{output_activation}'\n"
+                    f"\n"
+                    f"Why this error:\n"
+                    f"  - Binary CE expects outputs in [0, 1] range (probabilities)\n"
+                    f"  - Sigmoid naturally produces [0, 1] outputs\n"
+                    f"  - Tanh produces [-1, 1] (negative values get clipped, wrong gradients)\n"
+                    f"  - ReLU/Leaky ReLU/ELU are unbounded (breaks probability interpretation)\n"
+                    f"\n"
+                    f"Fix:\n"
+                    f"  output_layer = Layer(..., 'output', activation_func=ActivationFunction.sigmoid)\n"
+                    f"  training = Training(net, lr, clip, cost_function='binary_crossentropy')\n"
+                    f"\n"
+                    f"Alternative:\n"
+                    f"  - Use MSE or MAE with tanh (for [-1, 1] data)\n"
+                    f"  - Use categorical_crossentropy with softmax (for multi-class)\n"
+                )
 
-            # RULE 2: Categorical Cross-Entropy REQUIRES Softmax activation
-            if self.cost_function == 'categorical_crossentropy':
-                if output_activation != 'softmax':
-                    raise ValueError(
-                        f"Categorical cross-entropy loss REQUIRES softmax output activation.\n"
-                        f"Current output activation: '{output_activation}'\n"
-                        f"\n"
-                        f"Why this error:\n"
-                        f"  - Categorical CE expects probability distributions (outputs sum to 1.0)\n"
-                        f"  - Softmax produces valid probability distributions\n"
-                        f"  - Sigmoid outputs are independent probabilities (sum ≠ 1)\n"
-                        f"  - Tanh/ReLU don't produce valid probability distributions\n"
-                        f"  - The gradient computation is hardcoded for softmax + categorical CE\n"
-                        f"\n"
-                        f"Fix:\n"
-                        f"  output_layer = Layer(..., 'output', activation_func=ActivationFunction.softmax)\n"
-                        f"  training = Training(net, lr, clip, cost_function='categorical_crossentropy')\n"
-                        f"\n"
-                        f"Alternative:\n"
-                        f"  - Use binary_crossentropy with sigmoid (for 2-class problems)\n"
-                        f"  - Use MSE or MAE with tanh (for [-1, 1] data)\n"
-                    )
+        # RULE 2: Categorical Cross-Entropy REQUIRES Softmax activation
+        if self.cost_function == 'categorical_crossentropy':
+            if output_activation != 'softmax':
+                raise ValueError(
+                    f"Categorical cross-entropy loss REQUIRES softmax output activation.\n"
+                    f"Current output activation: '{output_activation}'\n"
+                    f"\n"
+                    f"Why this error:\n"
+                    f"  - Categorical CE expects probability distributions (outputs sum to 1.0)\n"
+                    f"  - Softmax produces valid probability distributions\n"
+                    f"  - Sigmoid outputs are independent probabilities (sum ≠ 1)\n"
+                    f"  - Tanh/ReLU don't produce valid probability distributions\n"
+                    f"  - The gradient computation is hardcoded for softmax + categorical CE\n"
+                    f"\n"
+                    f"Fix:\n"
+                    f"  output_layer = Layer(..., 'output', activation_func=ActivationFunction.softmax)\n"
+                    f"  training = Training(net, lr, clip, cost_function='categorical_crossentropy')\n"
+                    f"\n"
+                    f"Alternative:\n"
+                    f"  - Use binary_crossentropy with sigmoid (for 2-class problems)\n"
+                    f"  - Use MSE or MAE with tanh (for [-1, 1] data)\n"
+                )
 
-            # RULE 3: Softmax REQUIRES Categorical Cross-Entropy
-            if output_activation == 'softmax':
-                if self.cost_function != 'categorical_crossentropy':
-                    raise ValueError(
-                        f"Softmax output activation REQUIRES categorical cross-entropy loss.\n"
-                        f"Current cost function: '{self.cost_function}'\n"
-                        f"\n"
-                        f"Why this error:\n"
-                        f"  - Softmax has a Jacobian matrix derivative (not element-wise)\n"
-                        f"  - The implementation uses a hardcoded special case for softmax + categorical CE\n"
-                        f"  - Using softmax with other loss functions produces INCORRECT gradients\n"
-                        f"  - The softmax_derivative() function is a placeholder and doesn't compute real gradients\n"
-                        f"\n"
-                        f"Fix:\n"
-                        f"  output_layer = Layer(..., 'output', activation_func=ActivationFunction.softmax)\n"
-                        f"  training = Training(net, lr, clip, cost_function='categorical_crossentropy')\n"
-                        f"\n"
-                        f"Alternative (if not doing multi-class classification):\n"
-                        f"  - Use sigmoid with binary_crossentropy (for 2-class problems)\n"
-                        f"  - Use tanh with MSE/MAE (for [-1, 1] regression/classification)\n"
-                        f"  - Use linear with MSE/MAE (for unbounded regression)\n"
-                    )
+        # RULE 3: Softmax REQUIRES Categorical Cross-Entropy
+        if output_activation == 'softmax':
+            if self.cost_function != 'categorical_crossentropy':
+                raise ValueError(
+                    f"Softmax output activation REQUIRES categorical cross-entropy loss.\n"
+                    f"Current cost function: '{self.cost_function}'\n"
+                    f"\n"
+                    f"Why this error:\n"
+                    f"  - Softmax has a Jacobian matrix derivative (not element-wise)\n"
+                    f"  - The implementation uses a hardcoded special case for softmax + categorical CE\n"
+                    f"  - Using softmax with other loss functions produces INCORRECT gradients\n"
+                    f"  - The softmax_derivative() function is a placeholder and doesn't compute real gradients\n"
+                    f"\n"
+                    f"Fix:\n"
+                    f"  output_layer = Layer(..., 'output', activation_func=ActivationFunction.softmax)\n"
+                    f"  training = Training(net, lr, clip, cost_function='categorical_crossentropy')\n"
+                    f"\n"
+                    f"Alternative (if not doing multi-class classification):\n"
+                    f"  - Use sigmoid with binary_crossentropy (for 2-class problems)\n"
+                    f"  - Use tanh with MSE/MAE (for [-1, 1] regression/classification)\n"
+                    f"  - Use linear with MSE/MAE (for unbounded regression)\n"
+                )
 
 
     # These are our cost functions and friends
