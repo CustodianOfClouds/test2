@@ -715,7 +715,11 @@ trainer2.train(input_data, target_data, epochs=500)
 - ❌ Can't switch FROM softmax to anything except categorical_crossentropy
 - ✅ Can freely switch between MSE ⟷ MAE for any activation
 
-**Practical use case:**
+**Practical recommendations:**
+- ✅ **MSE ⟷ MAE are switchable** - Both are regression losses with different error metrics, switching makes sense
+- ❌ **Binary CE and Categorical CE - pick one and stick with it** - These are classification losses with different problem framings, switching mid-training doesn't make practical sense
+
+**Practical use case for MSE ⟷ MAE:**
 1. **Start with MAE** (robust to outliers, gets "close enough")
 2. **Switch to MSE** (fine-tunes, penalizes large errors more heavily)
 
