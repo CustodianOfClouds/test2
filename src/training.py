@@ -397,7 +397,7 @@ class Training:
 
             # Calculate the average cost for this epoch and print it
             num_samples_used = len(sample_indices)
-            avg_cost = total_cost / num_samples_used if num_samples_used > 0 else 0.0
+            avg_cost = total_cost / num_samples_used
 
             # Show how many samples were used if using subset training
             if samples_per_epoch is not None and samples_per_epoch < len(input_data):
