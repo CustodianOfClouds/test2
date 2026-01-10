@@ -488,7 +488,7 @@ public class SettingsEditorAction extends GuiAction
 				buttonsPanel.add(useDefault[i]);
 			}
 			JPanel instructions = new JPanel(new FlowLayout(FlowLayout.CENTER));
-			// create deaf, dumb and blind checkbox, for illustration
+			// create non-interactive checkbox for illustration purposes
 			JCheckBox illustrate =
 				new JCheckBox()
 			{
