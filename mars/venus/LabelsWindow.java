@@ -10,58 +10,25 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
-import javax.swing.border.*;
-
-/*
-Copyright (c) 2003-2009,  Pete Sanderson and Kenneth Vollmar
-
-Developed by Pete Sanderson (psanderson@otterbein.edu)
-and Kenneth Vollmar (kenvollmar@missouristate.edu)
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject
-to the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-(MIT license, http://www.opensource.org/licenses/mit-license.html)
-*/
 
 /**
   *  Represents the Labels window, which is a type of JInternalFrame.  Venus user
   *  can view MIPS program labels.
-  *   @author Sanderson and Team JSpim
+  *   @author CC
   **/
-
-public class LabelsWindow extends JPanel
-{
-	private JPanel labelPanel;      // holds J
+@SuppressWarnings({ "deprecation", "rawtypes", "unchecked" })
+public class LabelsWindow extends JPanel {
+	private JPanel labelPanel; // holds J
 	private JCheckBox dataLabels, textLabels, localLabels;
 	private ArrayList listOfLabelsForSymbolTable;
 	private static final int MAX_DISPLAYED_CHARS = 24;
-	private static final int PREFERRED_NAME_COLUMN_WIDTH = 60;
-	private static final int PREFERRED_ADDRESS_COLUMN_WIDTH = 60;
 	private static final int LABEL_COLUMN = 0;
 	private static final int ADDRESS_COLUMN = 1;
-	private static final String[] columnToolTips =
-	{
-		/* LABEL_COLUMN */   "Programmer-defined label (identifier).",
-		/* ADDRESS_COLUMN */ "Text or data segment address at which label is defined."
+	private static final String[] columnToolTips = {
+			/* LABEL_COLUMN */ "Programmer-defined label (identifier).",
+			/* ADDRESS_COLUMN */ "Text or data segment address at which label is defined."
 	};
-	private static String [] columnNames;
+	private static String[] columnNames;
 	private Comparator tableSortComparator;
 
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -79,43 +46,40 @@ public class LabelsWindow extends JPanel
 	// "Click Addr" column shows which state to go to when Addr column is clicked.
 	//////////////////////////////////////////////////////////////////////////////////////
 	// The array of comparators; index corresponds to state in table above.
-	private final Comparator[] tableSortingComparators =
-	{
-		/*  0  */  new LabelAddressAscendingComparator(),
-		/*  1  */  new DescendingComparator(new LabelAddressAscendingComparator()),
-		/*  2  */  new LabelAddressAscendingComparator(),
-		/*  3  */  new DescendingComparator(new LabelAddressAscendingComparator()),
-		/*  4  */  new LabelNameAscendingComparator(),
-		/*  5  */  new LabelNameAscendingComparator(),
-		/*  6  */  new DescendingComparator(new LabelNameAscendingComparator()),
-		/*  7  */  new DescendingComparator(new LabelNameAscendingComparator())
+	private final Comparator[] tableSortingComparators = {
+			/*  0  */ new LabelAddressAscendingComparator(),
+			/*  1  */ new DescendingComparator(new LabelAddressAscendingComparator()),
+			/*  2  */ new LabelAddressAscendingComparator(),
+			/*  3  */ new DescendingComparator(new LabelAddressAscendingComparator()),
+			/*  4  */ new LabelNameAscendingComparator(),
+			/*  5  */ new LabelNameAscendingComparator(),
+			/*  6  */ new DescendingComparator(new LabelNameAscendingComparator()),
+			/*  7  */ new DescendingComparator(new LabelNameAscendingComparator())
 	};
 	// The array of state transitions; primary index corresponds to state in table above,
 	// secondary index corresponds to table columns (0==label name, 1==address).
-	private static final int[][] sortStateTransitions =
-	{
-		/*  0  */  { 4, 1 },
-		/*  1  */  { 5, 0 },
-		/*  2  */  { 6, 3 },
-		/*  3  */  { 7, 2 },
-		/*  4  */  { 6, 0 },
-		/*  5  */  { 7, 1 },
-		/*  6  */  { 4, 2 },
-		/*  7  */  { 5, 3 }
+	private static final int[][] sortStateTransitions = {
+			/*  0  */ { 4, 1 },
+			/*  1  */ { 5, 0 },
+			/*  2  */ { 6, 3 },
+			/*  3  */ { 7, 2 },
+			/*  4  */ { 6, 0 },
+			/*  5  */ { 7, 1 },
+			/*  6  */ { 4, 2 },
+			/*  7  */ { 5, 3 }
 	};
 	// The array of column headings; index corresponds to state in table above.
 	private static final char ASCENDING_SYMBOL = '\u25b2'; //triangle with base at bottom ("points" up, to indicate ascending sort)
 	private static final char DESCENDING_SYMBOL = '\u25bc';//triangle with base at top ("points" down, to indicate descending sort)
-	private static final String[][] sortColumnHeadings =
-	{
-		/*  0  */  {"Label", "Address  " + ASCENDING_SYMBOL},
-		/*  1  */  {"Label", "Address  " + DESCENDING_SYMBOL},
-		/*  2  */  {"Label", "Address  " + ASCENDING_SYMBOL},
-		/*  3  */  {"Label", "Address  " + DESCENDING_SYMBOL},
-		/*  4  */  {"Label  " + ASCENDING_SYMBOL, "Address"},
-		/*  5  */  {"Label  " + ASCENDING_SYMBOL, "Address"},
-		/*  6  */  {"Label  " + DESCENDING_SYMBOL, "Address"},
-		/*  7  */  {"Label  " + DESCENDING_SYMBOL, "Address"}
+	private static final String[][] sortColumnHeadings = {
+			/*  0  */ { "Label", "Address  " + ASCENDING_SYMBOL },
+			/*  1  */ { "Label", "Address  " + DESCENDING_SYMBOL },
+			/*  2  */ { "Label", "Address  " + ASCENDING_SYMBOL },
+			/*  3  */ { "Label", "Address  " + DESCENDING_SYMBOL },
+			/*  4  */ { "Label  " + ASCENDING_SYMBOL, "Address" },
+			/*  5  */ { "Label  " + ASCENDING_SYMBOL, "Address" },
+			/*  6  */ { "Label  " + DESCENDING_SYMBOL, "Address" },
+			/*  7  */ { "Label  " + DESCENDING_SYMBOL, "Address" }
 	};
 
 	// Current sort state (0-7, see table above).  Will be set from saved Settings in construtor.
@@ -125,14 +89,10 @@ public class LabelsWindow extends JPanel
 	  *  Constructor for the Labels (symbol table) window.
 	**/
 
-	public LabelsWindow()
-	{
-		try
-		{
+	public LabelsWindow() {
+		try {
 			sortState = Integer.parseInt(Globals.getSettings().getLabelSortState());
-		}
-		catch(NumberFormatException nfe)
-		{
+		} catch (NumberFormatException nfe) {
 			sortState = 0;
 		}
 		columnNames = sortColumnHeadings[sortState];
@@ -162,8 +122,7 @@ public class LabelsWindow extends JPanel
 	/**
 	 * Initialize table of labels (symbol table)
 	 */
-	public void setupTable()
-	{
+	public void setupTable() {
 		labelPanel.removeAll();
 		labelPanel.add(generateLabelScrollPane());
 	}
@@ -171,32 +130,27 @@ public class LabelsWindow extends JPanel
 	/**
 	* Clear the window
 	*/
-	public void clearWindow()
-	{
+	public void clearWindow() {
 		labelPanel.removeAll();
 	}
 
 	//
-	private JScrollPane generateLabelScrollPane()
-	{
+	private JScrollPane generateLabelScrollPane() {
 		listOfLabelsForSymbolTable = new ArrayList();
 		listOfLabelsForSymbolTable.add(new LabelsForSymbolTable(null));// global symtab
 		ArrayList MIPSprogramsAssembled = RunAssembleAction.getMIPSprogramsToAssemble();
 		Box allSymtabTables = Box.createVerticalBox();
-		for(int i = 0; i < MIPSprogramsAssembled.size(); i++)
-		{
+		for (int i = 0; i < MIPSprogramsAssembled.size(); i++) {
 			listOfLabelsForSymbolTable.add(new LabelsForSymbolTable(
-											   (MIPSprogram) MIPSprogramsAssembled.get(i)));
+					(MIPSprogram) MIPSprogramsAssembled.get(i)));
 		}
-		ArrayList tableNames = new ArrayList();
+		ArrayList<Box> tableNames = new ArrayList<Box>();
 		JTableHeader tableHeader = null;
-		for(int i = 0; i < listOfLabelsForSymbolTable.size(); i++)
-		{
-			LabelsForSymbolTable symtab = (LabelsForSymbolTable)listOfLabelsForSymbolTable.get(i);
-			if(symtab.hasSymbols())
-			{
+		for (int i = 0; i < listOfLabelsForSymbolTable.size(); i++) {
+			LabelsForSymbolTable symtab = (LabelsForSymbolTable) listOfLabelsForSymbolTable.get(i);
+			if (symtab.hasSymbols()) {
 				String name = symtab.getSymbolTableName();
-				if(name.length() > MAX_DISPLAYED_CHARS)
+				if (name.length() > MAX_DISPLAYED_CHARS)
 					name = name.substring(0, MAX_DISPLAYED_CHARS - 3) + "...";
 				// To get left-justified, put file name into first slot of horizontal Box, then glue.
 				JLabel nameLab = new JLabel(name, JLabel.LEFT);
@@ -212,7 +166,7 @@ public class LabelsWindow extends JPanel
 				// displaying multiple symbol tables; the headers re-order but the columns do not.
 				// Given the low perceived benefit of reordering displayed symbol table information
 				// versus the perceived effort to make reordering work for multiple symbol tables,
-				// I am taking the easy way out here.  PS 19 July 2007.
+				// I am taking the easy way out here.  19 July 2007.
 				tableHeader.setReorderingAllowed(false);
 				// Sense click on label/address and scroll Text/Data segment display to it.
 				table.addMouseListener(new LabelDisplayMouseListener());
@@ -226,12 +180,11 @@ public class LabelsWindow extends JPanel
 		// Does it do any good?  Addressing problem that occurs when label (filename) is wider than
 		// the table beneath it -- the table column widths are stretched to attain the same width and
 		// the address information requires scrolling to see.  All because of a long file name.
-		for(int i = 0; i < tableNames.size(); i++)
-		{
-			JComponent nameLabel = (JComponent)tableNames.get(i);
+		for (int i = 0; i < tableNames.size(); i++) {
+			JComponent nameLabel = (JComponent) tableNames.get(i);
 			nameLabel.setMaximumSize(new Dimension(
-										 labelScrollPane.getViewport().getViewSize().width,
-										 (int)(1.5 * nameLabel.getFontMetrics(nameLabel.getFont()).getHeight())));
+					labelScrollPane.getViewport().getViewSize().width,
+					(int) (1.5 * nameLabel.getFontMetrics(nameLabel.getFont()).getHeight())));
 		}
 		labelScrollPane.setColumnHeaderView(tableHeader);
 		return labelScrollPane;
@@ -242,27 +195,21 @@ public class LabelsWindow extends JPanel
 	 * this should only be done when address base is changed.
 	 *  (e.g. between base 16 hex and base 10 dec).
 	 */
-	public void updateLabelAddresses()
-	{
-		if(listOfLabelsForSymbolTable != null)
-		{
-			for(int i = 0; i < listOfLabelsForSymbolTable.size(); i++)
-				((LabelsForSymbolTable)listOfLabelsForSymbolTable.get(i)).updateLabelAddresses();
+	public void updateLabelAddresses() {
+		if (listOfLabelsForSymbolTable != null) {
+			for (int i = 0; i < listOfLabelsForSymbolTable.size(); i++)
+				((LabelsForSymbolTable) listOfLabelsForSymbolTable.get(i)).updateLabelAddresses();
 		}
 	}
-
 
 	///////////////////////////////////////////////////////////////
 	//   Listener class to respond to "Text" or "Data" checkbox click
-	private class LabelItemListener implements ItemListener
-	{
-		public void itemStateChanged(ItemEvent ie)
-		{
-			for(int i = 0; i < listOfLabelsForSymbolTable.size(); i++)
-				((LabelsForSymbolTable)listOfLabelsForSymbolTable.get(i)).generateLabelTable();
+	private class LabelItemListener implements ItemListener {
+		public void itemStateChanged(ItemEvent ie) {
+			for (int i = 0; i < listOfLabelsForSymbolTable.size(); i++)
+				((LabelsForSymbolTable) listOfLabelsForSymbolTable.get(i)).generateLabelTable();
 		}
 	}
-
 
 	/////////////////////////////////////////////////////////////////
 	//  Private listener class to sense clicks on a table entry's
@@ -271,46 +218,35 @@ public class LabelsWindow extends JPanel
 	//  Suggested by Ken Vollmar, implemented by Pete Sanderson
 	//  July 2007.
 
-	private class LabelDisplayMouseListener extends MouseAdapter
-	{
-		public void mouseClicked(MouseEvent e)
-		{
+	private class LabelDisplayMouseListener extends MouseAdapter {
+		public void mouseClicked(MouseEvent e) {
 			JTable table = (JTable) e.getSource();
 			int row = table.rowAtPoint(e.getPoint());
 			int column = table.columnAtPoint(e.getPoint());
 			Object data = table.getValueAt(row, column);
-			if(table.getColumnName(column).equals(columnNames[LABEL_COLUMN]))
-			{
+			if (table.getColumnName(column).equals(columnNames[LABEL_COLUMN])) {
 				// Selected a Label name, so get its address.
 				data = table.getModel().getValueAt(row, ADDRESS_COLUMN);
 			}
 			int address = 0;
-			try
-			{
+			try {
 				address = Binary.stringToInt((String) data);
-			}
-			catch(NumberFormatException nfe)
-			{
+			} catch (NumberFormatException nfe) {
 				// Cannot happen because address is generated internally.
-			}
-			catch(ClassCastException cce)
-			{
+			} catch (ClassCastException cce) {
 				// Cannot happen because table contains only strings.
 			}
 			// Scroll to this address, either in Text Segment display or Data Segment display
-			if(Memory.inTextSegment(address) || Memory.inKernelTextSegment(address))
+			if (Memory.inTextSegment(address) || Memory.inKernelTextSegment(address))
 				Globals.getGui().getMainPane().getExecutePane().getTextSegmentWindow().selectStepAtAddress(address);
 			else
 				Globals.getGui().getMainPane().getExecutePane().getDataSegmentWindow().selectCellForAddress(address);
 		}
 	}
 
-
-
 	///////////////////////////////////////////////////////////////////
 	// Represents one symbol table for the display.
-	private class LabelsForSymbolTable
-	{
+	private class LabelsForSymbolTable {
 		private MIPSprogram myMIPSprogram;
 		private Object[][] labelData;
 		private JTable labelTable;
@@ -319,55 +255,50 @@ public class LabelsWindow extends JPanel
 		private String tableName;
 
 		// Associated MIPSprogram object.  If null, this represents global symbol table.
-		public LabelsForSymbolTable(MIPSprogram myMIPSprogram)
-		{
+		public LabelsForSymbolTable(MIPSprogram myMIPSprogram) {
 			this.myMIPSprogram = myMIPSprogram;
 			symbolTable = (myMIPSprogram == null)
-						  ? Globals.symbolTable
-						  : myMIPSprogram.getLocalSymbolTable();
+					? Globals.symbolTable
+					: myMIPSprogram.getLocalSymbolTable();
 			tableName = (myMIPSprogram == null)
-						? "(global)"
-						: new File(myMIPSprogram.getFilename()).getName();
+					? "(global)"
+					: new File(myMIPSprogram.getFilename()).getName();
 		}
 
 		// Returns file name of associated file for local symbol table or "(global)"
-		public String getSymbolTableName()
-		{
+		public String getSymbolTableName() {
 			return tableName;
 		}
 
-		public boolean hasSymbols()
-		{
+		public boolean hasSymbols() {
 			return symbolTable.getSize() != 0;
 		}
 
-
 		// builds the Table containing labels and addresses for this symbol table.
-		private JTable generateLabelTable()
-		{
+		private JTable generateLabelTable() {
 			SymbolTable symbolTable = (myMIPSprogram == null)
-									  ? Globals.symbolTable
-									  : myMIPSprogram.getLocalSymbolTable();
+					? Globals.symbolTable
+					: myMIPSprogram.getLocalSymbolTable();
 			int addressBase = Globals.getGui().getMainPane().getExecutePane().getAddressDisplayBase();
-			if(textLabels.isSelected() && dataLabels.isSelected())
+			if (textLabels.isSelected() && dataLabels.isSelected())
 				symbols = symbolTable.getAllSymbols(localLabels.isSelected());
-			else if(textLabels.isSelected() && !dataLabels.isSelected())
+			else if (textLabels.isSelected() && !dataLabels.isSelected())
 				symbols = symbolTable.getTextSymbols(localLabels.isSelected());
-			else if(!textLabels.isSelected() && dataLabels.isSelected())
+			else if (!textLabels.isSelected() && dataLabels.isSelected())
 				symbols = symbolTable.getDataSymbols(localLabels.isSelected());
 			else
 				symbols = new ArrayList();
-			Collections.sort(symbols, tableSortComparator); // DPS 25 Dec 2008
+			Collections.sort(symbols, tableSortComparator); // 25 Dec 2008
 			labelData = new Object[symbols.size()][2];
 
-			for(int i = 0; i < symbols.size(); i++) //sets up the label table
+			for (int i = 0; i < symbols.size(); i++) //sets up the label table
 			{
-				Symbol s = (Symbol)(symbols.get(i));
+				Symbol s = (Symbol) (symbols.get(i));
 				labelData[i][LABEL_COLUMN] = s.getName();
 				labelData[i][ADDRESS_COLUMN] = NumberDisplayBaseChooser.formatNumber(s.getAddress(), addressBase);
 			}
 			LabelTableModel m = new LabelTableModel(labelData, LabelsWindow.columnNames);
-			if(labelTable == null)
+			if (labelTable == null)
 				labelTable = new MyTippedJTable(m);
 			else
 				labelTable.setModel(m);
@@ -375,18 +306,15 @@ public class LabelsWindow extends JPanel
 			return labelTable;
 		}
 
-
-		public void updateLabelAddresses()
-		{
-			if(labelPanel.getComponentCount() == 0)
+		public void updateLabelAddresses() {
+			if (labelPanel.getComponentCount() == 0)
 				return; // ignore if no content to change
 			int addressBase = Globals.getGui().getMainPane().getExecutePane().getAddressDisplayBase();
 			int address;
 			String formattedAddress;
 			int numSymbols = (labelData == null) ? 0 : labelData.length;
-			for(int i = 0; i < numSymbols; i++)
-			{
-				address = ((Symbol)symbols.get(i)).getAddress();
+			for (int i = 0; i < numSymbols; i++) {
+				address = ((Symbol) symbols.get(i)).getAddress();
 				formattedAddress = NumberDisplayBaseChooser.formatNumber(address, addressBase);
 				labelTable.getModel().setValueAt(formattedAddress, i, ADDRESS_COLUMN);
 			}
@@ -394,38 +322,30 @@ public class LabelsWindow extends JPanel
 	}
 	//////////////////////  end of LabelsForOneSymbolTable class //////////////////
 
-
-
 	///////////////////////////////////////////////////////////////
 	// Class representing label table data
-	class LabelTableModel extends AbstractTableModel
-	{
+	class LabelTableModel extends AbstractTableModel {
 		String[] columns;
 		Object[][] data;
 
-		public LabelTableModel(Object[][] d, String [] n)
-		{
+		public LabelTableModel(Object[][] d, String[] n) {
 			data = d;
 			columns = n;
 		}
 
-		public int getColumnCount()
-		{
+		public int getColumnCount() {
 			return columns.length;
 		}
 
-		public int getRowCount()
-		{
+		public int getRowCount() {
 			return data.length;
 		}
 
-		public String getColumnName(int col)
-		{
+		public String getColumnName(int col) {
 			return columns[col];
 		}
 
-		public Object getValueAt(int row, int col)
-		{
+		public Object getValueAt(int row, int col) {
 			return data[row][col];
 		}
 
@@ -433,8 +353,7 @@ public class LabelsWindow extends JPanel
 		* JTable uses this method to determine the default renderer/
 		* editor for each cell.
 		*/
-		public Class getColumnClass(int c)
-		{
+		public Class<? extends Object> getColumnClass(int c) {
 			return getValueAt(0, c).getClass();
 		}
 
@@ -442,61 +361,36 @@ public class LabelsWindow extends JPanel
 		* Don't need to implement this method unless your table's
 		* data can change.
 		*/
-		public void setValueAt(Object value, int row, int col)
-		{
+		public void setValueAt(Object value, int row, int col) {
 			data[row][col] = value;
 			fireTableCellUpdated(row, col);
-		}
-
-		private void printDebugData()
-		{
-			int numRows = getRowCount();
-			int numCols = getColumnCount();
-
-			for(int i = 0; i < numRows; i++)
-			{
-				System.out.print("    row " + i + ":");
-				for(int j = 0; j < numCols; j++)
-					System.out.print("  " + data[i][j]);
-				System.out.println();
-			}
-			System.out.println("--------------------------");
 		}
 	}
 
 	///////////////////////////////////////////////////////////////////
 	//
 	// JTable subclass to provide custom tool tips for each of the
-	// label table column headers. From Sun's JTable tutorial.
-	// http://java.sun.com/docs/books/tutorial/uiswing/components/table.html
+	// label table column headers. 
 	//
-	private class MyTippedJTable extends JTable
-	{
-		MyTippedJTable(LabelTableModel m)
-		{
+	private class MyTippedJTable extends JTable {
+		MyTippedJTable(LabelTableModel m) {
 			super(m);
 		}
 
-
-
 		//Implement table header tool tips.
-		protected JTableHeader createDefaultTableHeader()
-		{
+		protected JTableHeader createDefaultTableHeader() {
 			return new SymbolTableHeader(columnModel);
 		}
 
 		// Implement cell tool tips.  All of them are the same (although they could be customized).
-		public Component prepareRenderer(TableCellRenderer renderer, int rowIndex, int vColIndex)
-		{
+		public Component prepareRenderer(TableCellRenderer renderer, int rowIndex, int vColIndex) {
 			Component c = super.prepareRenderer(renderer, rowIndex, vColIndex);
-			if(c instanceof JComponent)
-			{
-				JComponent jc = (JComponent)c;
+			if (c instanceof JComponent) {
+				JComponent jc = (JComponent) c;
 				jc.setToolTipText("Click on label or address to view it in Text/Data Segment");
 			}
 			return c;
 		}
-
 
 		/////////////////////////////////////////////////////////////////
 		//
@@ -505,31 +399,25 @@ public class LabelsWindow extends JPanel
 		// mouse is clicked on each column.  The tool tip and sort are
 		// customized based on the column under the mouse.
 
-		private class SymbolTableHeader extends JTableHeader
-		{
+		private class SymbolTableHeader extends JTableHeader {
 
-			public SymbolTableHeader(TableColumnModel cm)
-			{
+			public SymbolTableHeader(TableColumnModel cm) {
 				super(cm);
 				this.addMouseListener(new SymbolTableHeaderMouseListener());
 			}
 
-			public String getToolTipText(MouseEvent e)
-			{
+			public String getToolTipText(MouseEvent e) {
 				Point p = e.getPoint();
 				int index = columnModel.getColumnIndexAtX(p.x);
 				int realIndex = columnModel.getColumn(index).getModelIndex();
 				return columnToolTips[realIndex];
 			}
 
-
 			/////////////////////////////////////////////////////////////////////
 			// When user clicks on table column header, system will sort the
 			// table based on that column then redraw it.
-			private class SymbolTableHeaderMouseListener implements MouseListener
-			{
-				public void mouseClicked(MouseEvent e)
-				{
+			private class SymbolTableHeaderMouseListener implements MouseListener {
+				public void mouseClicked(MouseEvent e) {
 					Point p = e.getPoint();
 					int index = columnModel.getColumnIndexAtX(p.x);
 					int realIndex = columnModel.getColumn(index).getModelIndex();
@@ -541,26 +429,30 @@ public class LabelsWindow extends JPanel
 					Globals.getGui().getMainPane().getExecutePane().setLabelWindowVisibility(false);
 					Globals.getGui().getMainPane().getExecutePane().setLabelWindowVisibility(true);
 				}
-				public void mouseEntered(MouseEvent e) {}
-				public void mouseExited(MouseEvent e) {}
-				public void mousePressed(MouseEvent e) {}
-				public void mouseReleased(MouseEvent e) {}
+
+				public void mouseEntered(MouseEvent e) {
+				}
+
+				public void mouseExited(MouseEvent e) {
+				}
+
+				public void mousePressed(MouseEvent e) {
+				}
+
+				public void mouseReleased(MouseEvent e) {
+				}
 			}
 		}
 	}
 
-
 	////////////////////////////////////////////////////////////////////////////
 	//
 	//  Comparator class used to sort in ascending order a List of symbols alphabetically by name
-	private class LabelNameAscendingComparator implements java.util.Comparator
-	{
-		public int compare(Object a, Object b)
-		{
-			return ((Symbol)a).getName().toLowerCase().compareTo(((Symbol)b).getName().toLowerCase());
+	private class LabelNameAscendingComparator implements java.util.Comparator {
+		public int compare(Object a, Object b) {
+			return ((Symbol) a).getName().toLowerCase().compareTo(((Symbol) b).getName().toLowerCase());
 		}
 	}
-
 
 	////////////////////////////////////////////////////////////////////////////
 	//
@@ -571,16 +463,13 @@ public class LabelsWindow extends JPanel
 	//  Remember, if not equal then any value with correct sign will work.
 	//  If both have same sign, a-b will yield correct result.
 	//  If signs differ, b will yield correct result (think about it).
-	private class LabelAddressAscendingComparator implements java.util.Comparator
-	{
-		public int compare(Object a, Object b)
-		{
-			int addrA = ((Symbol)a).getAddress();
-			int addrB = ((Symbol)b).getAddress();
-			return (addrA >= 0 && addrB >= 0 || addrA < 0 && addrB < 0) ? addrA - addrB : addrB ;
+	private class LabelAddressAscendingComparator implements java.util.Comparator {
+		public int compare(Object a, Object b) {
+			int addrA = ((Symbol) a).getAddress();
+			int addrB = ((Symbol) b).getAddress();
+			return (addrA >= 0 && addrB >= 0 || addrA < 0 && addrB < 0) ? addrA - addrB : addrB;
 		}
 	}
-
 
 	////////////////////////////////////////////////////////////////////////////
 	//
@@ -589,19 +478,16 @@ public class LabelsWindow extends JPanel
 	//  Comparator object provided as the argument constructor.  This works because it
 	//  is implemented by returning the result of the Ascending comparator when
 	//  arguments are reversed.
-	private class DescendingComparator implements java.util.Comparator
-	{
+	private class DescendingComparator implements java.util.Comparator {
 		private Comparator opposite;
-		private DescendingComparator(Comparator opposite)
-		{
+
+		private DescendingComparator(Comparator opposite) {
 			this.opposite = opposite;
 		}
-		public int compare(Object a, Object b)
-		{
+
+		public int compare(Object a, Object b) {
 			return opposite.compare(b, a);
 		}
 	}
 
-
 }
-

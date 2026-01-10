@@ -1,37 +1,9 @@
 package mars.venus;
+
 import mars.*;
 import mars.util.*;
-import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-
-/*
-Copyright (c) 2003-2006,  Pete Sanderson and Kenneth Vollmar
-
-Developed by Pete Sanderson (psanderson@otterbein.edu)
-and Kenneth Vollmar (kenvollmar@missouristate.edu)
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject
-to the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-(MIT license, http://www.opensource.org/licenses/mit-license.html)
-*/
 
 /**
  * Use to select base for displaying numbers.  Initially the
@@ -39,9 +11,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * a check box where checked means hex.  If base 8 (octal)
  * is added later, the Component will need to change.
  */
-
-public class NumberDisplayBaseChooser extends JCheckBox
-{
+@SuppressWarnings("deprecation")
+public class NumberDisplayBaseChooser extends JCheckBox {
 	public static final int DECIMAL = 10;
 	public static final int HEXADECIMAL = 16;
 	public static final int ASCII = 0;
@@ -54,41 +25,36 @@ public class NumberDisplayBaseChooser extends JCheckBox
 	 * @param text Text to accompany the check box.
 	 * @param defaultBase Currently either DECIMAL or HEXADECIMAL
 	 */
-	public NumberDisplayBaseChooser(String text, boolean displayInHex)
-	{
+	public NumberDisplayBaseChooser(String text, boolean displayInHex) {
 		super(text, displayInHex);
 		base = getBase(displayInHex);
 		addItemListener(
-			new  ItemListener()
-		{
-			public void itemStateChanged(ItemEvent ie)
-			{
-				NumberDisplayBaseChooser choose = (NumberDisplayBaseChooser)ie.getItem();
-				if(ie.getStateChange() == ItemEvent.SELECTED)
-					choose.setBase(NumberDisplayBaseChooser.HEXADECIMAL);
-				else
-					choose.setBase(NumberDisplayBaseChooser.DECIMAL);
-				// Better to use notify, but I am tired...
-				if(settingMenuItem != null)
-				{
-					settingMenuItem.setSelected(choose.isSelected());
-					ActionListener[] listeners = settingMenuItem.getActionListeners();
-					ActionEvent event = new ActionEvent(settingMenuItem, 0, "chooser");
-					for(int i = 0; i < listeners.length; i++)
-						listeners[i].actionPerformed(event);
-				}
-				// Better to use notify, but I am tired...
-				Globals.getGui().getMainPane().getExecutePane().numberDisplayBaseChanged(choose);
-			}
-		});
+				new ItemListener() {
+					public void itemStateChanged(ItemEvent ie) {
+						NumberDisplayBaseChooser choose = (NumberDisplayBaseChooser) ie.getItem();
+						if (ie.getStateChange() == ItemEvent.SELECTED)
+							choose.setBase(NumberDisplayBaseChooser.HEXADECIMAL);
+						else
+							choose.setBase(NumberDisplayBaseChooser.DECIMAL);
+						// Better to use notify, but I am tired...
+						if (settingMenuItem != null) {
+							settingMenuItem.setSelected(choose.isSelected());
+							ActionListener[] listeners = settingMenuItem.getActionListeners();
+							ActionEvent event = new ActionEvent(settingMenuItem, 0, "chooser");
+							for (int i = 0; i < listeners.length; i++)
+								listeners[i].actionPerformed(event);
+						}
+						// Better to use notify, but I am tired...
+						Globals.getGui().getMainPane().getExecutePane().numberDisplayBaseChanged(choose);
+					}
+				});
 	}
 
 	/**
 	 * Retrieve the current number base.
 	 * @return current number base, currently DECIMAL or HEXADECIMAL
 	 */
-	public int getBase()
-	{
+	public int getBase() {
 		return base;
 	}
 
@@ -97,12 +63,10 @@ public class NumberDisplayBaseChooser extends JCheckBox
 	 * @param newBase The new number base.  Currently, if it is
 	 * neither DECIMAL nor HEXADECIMAL, the base will not be changed.
 	 */
-	public void setBase(int newBase)
-	{
-		if(newBase == DECIMAL || newBase == HEXADECIMAL)
+	public void setBase(int newBase) {
+		if (newBase == DECIMAL || newBase == HEXADECIMAL)
 			base = newBase;
 	}
-
 
 	/**
 	 * Produces a string form of an unsigned given the value and the
@@ -115,14 +79,12 @@ public class NumberDisplayBaseChooser extends JCheckBox
 	 * @param base the numerical base to use (currently 10 or 16)
 	 * @return a String equivalent of the value rendered appropriately.
 	 */
-	public static String formatUnsignedInteger(int value, int base)
-	{
-		if(base == NumberDisplayBaseChooser.HEXADECIMAL)
+	public static String formatUnsignedInteger(int value, int base) {
+		if (base == NumberDisplayBaseChooser.HEXADECIMAL)
 			return Binary.intToHexString(value);
 		else
 			return Binary.unsignedIntToIntString(value);
 	}
-
 
 	/**
 	 * Produces a string form of an integer given the value and the
@@ -133,21 +95,19 @@ public class NumberDisplayBaseChooser extends JCheckBox
 	 * @param base the numerical base to use (currently 10 or 16)
 	 * @return a String equivalent of the value rendered appropriately.
 	 */
-	public static String formatNumber(int value, int base)
-	{
+	public static String formatNumber(int value, int base) {
 		String result;
-		switch(base)
-		{
-			case HEXADECIMAL :
+		switch (base) {
+			case HEXADECIMAL:
 				result = Binary.intToHexString(value);
 				break;
-			case DECIMAL :
-				result =  Integer.toString(value);
+			case DECIMAL:
+				result = Integer.toString(value);
 				break;
-			case ASCII :
+			case ASCII:
 				result = Binary.intToAscii(value);
 				break;
-			default :
+			default:
 				result = Integer.toString(value);
 		}
 		return result;
@@ -159,7 +119,6 @@ public class NumberDisplayBaseChooser extends JCheckBox
 		//          }
 	}
 
-
 	/**
 	 * Produces a string form of a float given the value and the
 	 * numerical base to convert it to.  There is an instance
@@ -169,14 +128,12 @@ public class NumberDisplayBaseChooser extends JCheckBox
 	 * @param base the numerical base to use (currently 10 or 16)
 	 * @return a String equivalent of the value rendered appropriately.
 	 */
-	public static String formatNumber(float value, int base)
-	{
-		if(base == NumberDisplayBaseChooser.HEXADECIMAL)
+	public static String formatNumber(float value, int base) {
+		if (base == NumberDisplayBaseChooser.HEXADECIMAL)
 			return Binary.intToHexString(Float.floatToIntBits(value));
 		else
 			return Float.toString(value);
 	}
-
 
 	/**
 	 * Produces a string form of a double given the value and the
@@ -187,15 +144,12 @@ public class NumberDisplayBaseChooser extends JCheckBox
 	 * @param base the numerical base to use (currently 10 or 16)
 	 * @return a String equivalent of the value rendered appropriately.
 	 */
-	public static String formatNumber(double value, int base)
-	{
-		if(base == NumberDisplayBaseChooser.HEXADECIMAL)
-		{
+	public static String formatNumber(double value, int base) {
+		if (base == NumberDisplayBaseChooser.HEXADECIMAL) {
 			long lguy = Double.doubleToLongBits(value);
 			return Binary.intToHexString(Binary.highOrderLongToInt(lguy)) +
-				   Binary.intToHexString(Binary.lowOrderLongToInt(lguy)).substring(2);
-		}
-		else
+					Binary.intToHexString(Binary.lowOrderLongToInt(lguy)).substring(2);
+		} else
 			return Double.toString(value);
 	}
 
@@ -206,9 +160,8 @@ public class NumberDisplayBaseChooser extends JCheckBox
 	 * @param value the number to be converted
 	 * @return a String equivalent of the value rendered appropriately.
 	 */
-	public String formatNumber(int value)
-	{
-		if(base == NumberDisplayBaseChooser.HEXADECIMAL)
+	public String formatNumber(int value) {
+		if (base == NumberDisplayBaseChooser.HEXADECIMAL)
 			return Binary.intToHexString(value);
 		else
 			return new Integer(value).toString();
@@ -221,11 +174,9 @@ public class NumberDisplayBaseChooser extends JCheckBox
 	 * @param value the number to be converted
 	 * @return a String equivalent of the value rendered appropriately.
 	 */
-	public String formatUnsignedInteger(int value)
-	{
+	public String formatUnsignedInteger(int value) {
 		return formatUnsignedInteger(value, base);
 	}
-
 
 	/**
 	 * Produces a string form of a float given an integer containing
@@ -241,14 +192,13 @@ public class NumberDisplayBaseChooser extends JCheckBox
 	 * pattern!  Then converting it to hex string yields the canonical NaN.
 	 * Not an issue if display base is 10 since result string will be NaN
 	 * no matter what the internal NaN value is.
-
+	
 	 * @param value the int bits to be converted to string of corresponding float.
 	 * @param base the numerical base to use (currently 10 or 16)
 	 * @return a String equivalent of the value rendered appropriately.
 	 */
-	public static String formatFloatNumber(int value, int base)
-	{
-		if(base == NumberDisplayBaseChooser.HEXADECIMAL)
+	public static String formatFloatNumber(int value, int base) {
+		if (base == NumberDisplayBaseChooser.HEXADECIMAL)
 			return Binary.intToHexString(value);
 		else
 			return Float.toString(Float.intBitsToFloat(value));
@@ -268,19 +218,17 @@ public class NumberDisplayBaseChooser extends JCheckBox
 	 * pattern!  Then converting it to hex string yields the canonical NaN.
 	 * Not an issue if display base is 10 since result string will be NaN
 	 * no matter what the internal NaN value is.
-
+	
 	 * @param value the long bits to be converted to string of corresponding double.
 	 * @param base the numerical base to use (currently 10 or 16)
 	 * @return a String equivalent of the value rendered appropriately.
 	 */
-	public static String formatDoubleNumber(long value, int base)
-	{
-		if(base == NumberDisplayBaseChooser.HEXADECIMAL)
+	public static String formatDoubleNumber(long value, int base) {
+		if (base == NumberDisplayBaseChooser.HEXADECIMAL)
 			return Binary.longToHexString(value);
 		else
 			return Double.toString(Double.longBitsToDouble(value));
 	}
-
 
 	/**
 	 *  Set the menu item from Settings menu that corresponds to this chooser.
@@ -289,18 +237,15 @@ public class NumberDisplayBaseChooser extends JCheckBox
 	 *  with each other so that whenever one changes, so does the other.  They
 	 *  cannot be the same object (one is JCheckBox, the other is JCheckBoxMenuItem).
 	 */
-	public void setSettingsMenuItem(JCheckBoxMenuItem setter)
-	{
+	public void setSettingsMenuItem(JCheckBoxMenuItem setter) {
 		settingMenuItem = setter;
 	}
-
 
 	/**
 	 *  Return the number base corresponding to the specified setting.
 	 *  @return HEXADECIMAL if setting is true, DECIMAL otherwise.
 	 */
-	public static int getBase(boolean setting)
-	{
-		return (setting) ? HEXADECIMAL : DECIMAL ;
+	public static int getBase(boolean setting) {
+		return (setting) ? HEXADECIMAL : DECIMAL;
 	}
 }

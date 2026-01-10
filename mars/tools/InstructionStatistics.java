@@ -1,30 +1,3 @@
-/*
-Copyright (c) 2009,  Ingo Kofler, ITEC, Klagenfurt University, Austria
-
-Developed by Ingo Kofler (ingo.kofler@itec.uni-klu.ac.at)
-Based on the Instruction Counter tool by Felipe Lessa (felipe.lessa@gmail.com)
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject
-to the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-(MIT license, http://www.opensource.org/licenses/mit-license.html)
- */
 package mars.tools;
 
 import java.awt.GridBagConstraints;
@@ -44,30 +17,24 @@ import mars.mips.hardware.AddressErrorException;
 import mars.mips.hardware.Memory;
 import mars.mips.hardware.MemoryAccessNotice;
 
-
 /**
  *
  * A MARS tool for obtaining instruction statistics by instruction category.
- * <p>
- * The code of this tools is initially based on the Instruction counter tool by Felipe Lassa.
  *
- * @author Ingo Kofler <ingo.kofler@itec.uni-klu.ac.at>
+ * @author CC
  *
  */
-// @SuppressWarnings("serial")
-public class InstructionStatistics extends AbstractMarsToolAndApplication
-{
+@SuppressWarnings("deprecation")
+public class InstructionStatistics extends AbstractMarsToolAndApplication {
 
 	/** name of the tool */
-	private static String NAME    = "Instruction Statistics";
+	private static String NAME = "Instruction Statistics";
 
 	/** version and author information of the tool */
-	private static String VERSION = "Version 1.0 (Ingo Kofler)";
+	private static String VERSION = "Version 1.0";
 
 	/** heading of the tool */
 	private static String HEADING = "";
-
-
 
 	/** number of instruction categories used by this tool */
 	private static final int MAX_CATEGORY = 5;
@@ -87,9 +54,6 @@ public class InstructionStatistics extends AbstractMarsToolAndApplication
 	/** constant for any other instruction category */
 	private static final int CATEGORY_OTHER = 4;
 
-
-
-
 	/** text field for visualizing the total number of instructions processed */
 	private JTextField m_tfTotalCounter;
 
@@ -98,7 +62,6 @@ public class InstructionStatistics extends AbstractMarsToolAndApplication
 
 	/** array of progress pars - one for each instruction category */
 	private JProgressBar m_pbCounters[];
-
 
 	/** counter for the total number of instructions processed */
 	private int m_totalCounter = 0;
@@ -109,8 +72,7 @@ public class InstructionStatistics extends AbstractMarsToolAndApplication
 	/** names of the instruction categories as array */
 	private String m_categoryLabels[] = { "ALU", "Jump", "Branch", "Memory", "Other" };
 
-
-	// From Felipe Lessa's instruction counter.  Prevent double-counting of instructions
+	// From instruction counter.  Prevent double-counting of instructions
 	// which happens because 2 read events are generated.
 	/**
 	 * The last address we saw. We ignore it because the only way for a
@@ -124,39 +86,32 @@ public class InstructionStatistics extends AbstractMarsToolAndApplication
 	 * @param title String containing title for title bar
 	 * @param heading String containing text for heading shown in upper part of window.
 	 */
-	public InstructionStatistics(String title, String heading)
-	{
+	public InstructionStatistics(String title, String heading) {
 		super(title, heading);
 	}
-
 
 	/**
 	 * Simple construction, likely used by the MARS Tools menu mechanism.
 	 */
-	public InstructionStatistics()
-	{
+	public InstructionStatistics() {
 		super(InstructionStatistics.NAME + ", " + InstructionStatistics.VERSION, InstructionStatistics.HEADING);
 	}
-
 
 	/**
 	 * returns the name of the tool
 	 *
 	 * @return the tools's name
 	 */
-	public String getName()
-	{
+	public String getName() {
 		return NAME;
 	}
-
 
 	/**
 	 * creates the display area for the tool as required by the API
 	 *
 	 * @return a panel that holds the GUI of the tool
 	 */
-	protected JComponent buildMainDisplayArea()
-	{
+	protected JComponent buildMainDisplayArea() {
 
 		// Create GUI elements for the tool
 		JPanel panel = new JPanel(new GridBagLayout());
@@ -168,8 +123,7 @@ public class InstructionStatistics extends AbstractMarsToolAndApplication
 		m_pbCounters = new JProgressBar[MAX_CATEGORY];
 
 		// for each category a text field and a progress bar is created
-		for(int i = 0; i < InstructionStatistics.MAX_CATEGORY; i++)
-		{
+		for (int i = 0; i < InstructionStatistics.MAX_CATEGORY; i++) {
 			m_tfCounters[i] = new JTextField("0", 10);
 			m_tfCounters[i].setEditable(false);
 			m_pbCounters[i] = new JProgressBar(JProgressBar.HORIZONTAL);
@@ -191,8 +145,7 @@ public class InstructionStatistics extends AbstractMarsToolAndApplication
 		c.insets = new Insets(3, 3, 3, 3);
 
 		// create label, text field and progress bar for each category
-		for(int i = 0; i < InstructionStatistics.MAX_CATEGORY; i++)
-		{
+		for (int i = 0; i < InstructionStatistics.MAX_CATEGORY; i++) {
 			c.gridy++;
 			c.gridx = 2;
 			panel.add(new JLabel(m_categoryLabels[i] + ":   "), c);
@@ -205,16 +158,13 @@ public class InstructionStatistics extends AbstractMarsToolAndApplication
 		return panel;
 	}
 
-
 	/**
 	 * registers the tool as observer for the text segment of the MIPS program
 	 *
 	 */
-	protected void addAsObserver()
-	{
+	protected void addAsObserver() {
 		addAsObserver(Memory.textBaseAddress, Memory.textLimitAddress);
 	}
-
 
 	/**
 	 * decodes the instruction and determines the category of the instruction.
@@ -230,48 +180,44 @@ public class InstructionStatistics extends AbstractMarsToolAndApplication
 	 * @see InstructionStatistics#CATEGORY_MEM
 	 * @see InstructionStatistics#CATEGORY_OTHER
 	 */
-	protected int getInstructionCategory(ProgramStatement stmt)
-	{
+	protected int getInstructionCategory(ProgramStatement stmt) {
 
 		int opCode = stmt.getBinaryStatement() >>> (32 - 6);
 		int funct = stmt.getBinaryStatement() & 0x1F;
 
-		if(opCode == 0x00)
-		{
-			if(funct == 0x00)
+		if (opCode == 0x00) {
+			if (funct == 0x00)
 				return InstructionStatistics.CATEGORY_ALU; // sll
-			if(0x02 <= funct && funct <= 0x07)
+			if (0x02 <= funct && funct <= 0x07)
 				return InstructionStatistics.CATEGORY_ALU; // srl, sra, sllv, srlv, srav
-			if(funct == 0x08 || funct == 0x09)
+			if (funct == 0x08 || funct == 0x09)
 				return InstructionStatistics.CATEGORY_JUMP; // jr, jalr
-			if(0x10 <= funct && funct <= 0x2F)
+			if (0x10 <= funct && funct <= 0x2F)
 				return InstructionStatistics.CATEGORY_ALU; // mfhi, mthi, mflo, mtlo, mult, multu, div, divu, add, addu, sub, subu, and, or, xor, nor, slt, sltu
 			return InstructionStatistics.CATEGORY_OTHER;
 		}
-		if(opCode == 0x01)
-		{
-			if(0x00 <= funct && funct <= 0x07)
+		if (opCode == 0x01) {
+			if (0x00 <= funct && funct <= 0x07)
 				return InstructionStatistics.CATEGORY_BRANCH; // bltz, bgez, bltzl, bgezl
-			if(0x10 <= funct && funct <= 0x13)
+			if (0x10 <= funct && funct <= 0x13)
 				return InstructionStatistics.CATEGORY_BRANCH; // bltzal, bgezal, bltzall, bgczall
 			return InstructionStatistics.CATEGORY_OTHER;
 		}
-		if(opCode == 0x02 || opCode == 0x03)
+		if (opCode == 0x02 || opCode == 0x03)
 			return InstructionStatistics.CATEGORY_JUMP; // j, jal
-		if(0x04 <= opCode && opCode <= 0x07)
+		if (0x04 <= opCode && opCode <= 0x07)
 			return InstructionStatistics.CATEGORY_BRANCH; // beq, bne, blez, bgtz
-		if(0x08 <= opCode && opCode <= 0x0F)
+		if (0x08 <= opCode && opCode <= 0x0F)
 			return InstructionStatistics.CATEGORY_ALU; // addi, addiu, slti, sltiu, andi, ori, xori, lui
-		if(0x14 <= opCode && opCode <= 0x17)
+		if (0x14 <= opCode && opCode <= 0x17)
 			return InstructionStatistics.CATEGORY_BRANCH; // beql, bnel, blezl, bgtzl
-		if(0x20 <= opCode && opCode <= 0x26)
+		if (0x20 <= opCode && opCode <= 0x26)
 			return InstructionStatistics.CATEGORY_MEM; // lb, lh, lwl, lw, lbu, lhu, lwr
-		if(0x28 <= opCode && opCode <= 0x2E)
+		if (0x28 <= opCode && opCode <= 0x2E)
 			return InstructionStatistics.CATEGORY_MEM; // sb, sh, swl, sw, swr
 
 		return InstructionStatistics.CATEGORY_OTHER;
 	}
-
 
 	/**
 	 * method that is called each time the MIPS simulator accesses the text segment.
@@ -282,87 +228,74 @@ public class InstructionStatistics extends AbstractMarsToolAndApplication
 	 * @param resource the observed resource
 	 * @param notice signals the type of access (memory, register etc.)
 	 */
-	protected void processMIPSUpdate(Observable resource, AccessNotice notice)
-	{
+	protected void processMIPSUpdate(Observable resource, AccessNotice notice) {
 
-		if(!notice.accessIsFromMIPS())
+		if (!notice.accessIsFromMIPS())
 			return;
 
 		// check for a read access in the text segment
-		if(notice.getAccessType() == AccessNotice.READ && notice instanceof MemoryAccessNotice)
-		{
+		if (notice.getAccessType() == AccessNotice.READ && notice instanceof MemoryAccessNotice) {
 
 			// now it is safe to make a cast of the notice
 			MemoryAccessNotice memAccNotice = (MemoryAccessNotice) notice;
 
-			// The next three statments are from Felipe Lessa's instruction counter.  Prevents double-counting.
+			// The next three statments are from instruction counter.  Prevents double-counting.
 			int a = memAccNotice.getAddress();
-			if(a == lastAddress)
+			if (a == lastAddress)
 				return;
 			lastAddress = a;
 
-			try
-			{
+			try {
 
 				// access the statement in the text segment without notifying other tools etc.
 				ProgramStatement stmt = Memory.getInstance().getStatementNoNotify(memAccNotice.getAddress());
 
 				// necessary to handle possible null pointers at the end of the program
 				// (e.g., if the simulator tries to execute the next instruction after the last instruction in the text segment)
-				if(stmt != null)
-				{
+				if (stmt != null) {
 					int category = getInstructionCategory(stmt);
 
-					m_totalCounter ++;
-					m_counters[category] ++;
+					m_totalCounter++;
+					m_counters[category]++;
 					updateDisplay();
 				}
-			}
-			catch(AddressErrorException e)
-			{
+			} catch (AddressErrorException e) {
 				// silently ignore these exceptions
 			}
 		}
 	}
 
-
 	/**
 	 * performs initialization tasks of the counters before the GUI is created.
 	 *
 	 */
-	protected void initializePreGUI()
-	{
+	protected void initializePreGUI() {
 		m_totalCounter = 0;
-		lastAddress = -1; // from Felipe Lessa's instruction counter tool
-		for(int i = 0; i < InstructionStatistics.MAX_CATEGORY; i++)
+		lastAddress = -1; // from instruction counter tool
+		for (int i = 0; i < InstructionStatistics.MAX_CATEGORY; i++)
 			m_counters[i] = 0;
 	}
-
 
 	/**
 	 * resets the counter values of the tool and updates the display.
 	 *
 	 */
-	protected void reset()
-	{
+	protected void reset() {
 		m_totalCounter = 0;
-		lastAddress = -1; // from Felipe Lessa's instruction counter tool
-		for(int i = 0; i < InstructionStatistics.MAX_CATEGORY; i++)
+		lastAddress = -1; // from instruction counter tool
+		for (int i = 0; i < InstructionStatistics.MAX_CATEGORY; i++)
 			m_counters[i] = 0;
 		updateDisplay();
 	}
-
 
 	/**
 	 * updates the text fields and progress bars according to the current counter values.
 	 *
 	 */
-	protected void updateDisplay()
-	{
+	protected void updateDisplay() {
 		m_tfTotalCounter.setText(String.valueOf(m_totalCounter));
 
-		for(int i = 0; i < InstructionStatistics.MAX_CATEGORY; i++)
-		{
+		for (int i = 0; i < InstructionStatistics.MAX_CATEGORY; i++) {
 			m_tfCounters[i].setText(String.valueOf(m_counters[i]));
 			m_pbCounters[i].setMaximum(m_totalCounter);
 			m_pbCounters[i].setValue(m_counters[i]);

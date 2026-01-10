@@ -1,37 +1,8 @@
 package mars.mips.instructions.syscalls;
+
 import mars.util.*;
 import mars.mips.hardware.*;
-import mars.simulator.*;
 import mars.*;
-
-/*
-Copyright (c) 2003-2006,  Pete Sanderson and Kenneth Vollmar
-
-Developed by Pete Sanderson (psanderson@otterbein.edu)
-and Kenneth Vollmar (kenvollmar@missouristate.edu)
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject
-to the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-(MIT license, http://www.opensource.org/licenses/mit-license.html)
- */
-
 
 /**
  * Service to open file name specified by $a0. File descriptor returned in $v0.
@@ -40,14 +11,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
 
-public class SyscallOpen extends AbstractSyscall
-{
+public class SyscallOpen extends AbstractSyscall {
 	/**
 	 * Build an instance of the Open file syscall.  Default service number
 	 * is 13 and name is "Open".
 	 */
-	public SyscallOpen()
-	{
+	public SyscallOpen() {
 		super(13, "Open");
 	}
 
@@ -58,8 +27,7 @@ public class SyscallOpen extends AbstractSyscall
 	* write-create.  write-append will start writing at end of existing file.
 	* Mode ($a2) is ignored.
 	*/
-	public void simulate(ProgramStatement statement) throws ProcessingException
-	{
+	public void simulate(ProgramStatement statement) throws ProcessingException {
 		// NOTE: with MARS 3.7, return changed from $a0 to $v0 and the terminology
 		// of 'flags' and 'mode' was corrected (they had been reversed).
 		//
@@ -76,24 +44,21 @@ public class SyscallOpen extends AbstractSyscall
 		// or -1 if error
 		String filename = new String(); // = "";
 		int byteAddress = RegisterFile.getValue(4);
-		char ch[] = { ' '}; // Need an array to convert to String
-		try
-		{
+		char ch[] = { ' ' }; // Need an array to convert to String
+		try {
 			ch[0] = (char) Globals.memory.getByte(byteAddress);
-			while(ch[0] != 0)  // only uses single location ch[0]
+			while (ch[0] != 0) // only uses single location ch[0]
 			{
 				filename = filename.concat(new String(ch)); // parameter to String constructor is a char[] array
 				byteAddress++;
 				ch[0] = (char) Globals.memory.getByte(
-							byteAddress);
+						byteAddress);
 			}
-		}
-		catch(AddressErrorException e)
-		{
+		} catch (AddressErrorException e) {
 			throw new ProcessingException(statement, e);
 		}
 		int retValue = SystemIO.openFile(filename,
-										 RegisterFile.getValue(5));
+				RegisterFile.getValue(5));
 		RegisterFile.updateRegister(2, retValue); // set returned fd value in register
 
 		// GETTING RID OF PROCESSING EXCEPTION.  IT IS THE RESPONSIBILITY OF THE

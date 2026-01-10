@@ -1,12 +1,3 @@
-/*
- * Token.java - Generic token
- * Copyright (C) 1998, 1999 Slava Pestov
- *
- * You may use and modify this package for any purpose. Redistribution is
- * permitted, in both source and binary form, provided that this notice
- * remains intact in all source distributions of this package.
- */
-
 package mars.venus.editors.jeditsyntax.tokenmarker;
 
 /**
@@ -16,19 +7,18 @@ package mars.venus.editors.jeditsyntax.tokenmarker;
  * to get a color value, a length value which is the length of the
  * token in the text, and a pointer to the next token in the list.
  *
- * @author Slava Pestov
- * @version $Id: Token.java,v 1.12 1999/12/13 03:40:30 sp Exp $
+ * @author CC
+ * @version the big 26
  */
 
-public class Token
-{
-// NOTE from DPS 13-May-2010.
-// Please do not modify any of these constants!  It's not fatal or
-// anything, but will cause funny results in the MARS Settings
-// mechanism (at least temporarily until changed).  The
-// associated values here are appended into the key names for
-// persistent storage (e.g. registry) of syntax style information
-// for the various tokens.
+public class Token {
+	// NOTE 13-May-2010.
+	// Please do not modify any of these constants!  It's not fatal or
+	// anything, but will cause funny results in the MARS Settings
+	// mechanism (at least temporarily until changed).  The
+	// associated values here are appended into the key names for
+	// persistent storage (e.g. registry) of syntax style information
+	// for the various tokens.
 
 	/**
 	 * Normal text token id. This should be used to mark
@@ -45,7 +35,6 @@ public class Token
 	 * Comment 2 token id. This can be used to mark a comment.
 	 */
 	public static final byte COMMENT2 = 2;
-
 
 	/**
 	 * Literal 1 token id. This can be used to mark a string
@@ -147,8 +136,7 @@ public class Token
 	 * @param length The length of the token
 	 * @param id The id of the token
 	 */
-	public Token(int length, byte id)
-	{
+	public Token(int length, byte id) {
 		this.length = length;
 		this.id = id;
 	}
@@ -156,8 +144,7 @@ public class Token
 	/**
 	 * Returns a string representation of this token.
 	 */
-	public String toString()
-	{
+	public String toString() {
 		return "[id=" + id + ",length=" + length + "]";
 	}
 }

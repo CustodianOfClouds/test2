@@ -1,48 +1,18 @@
 package mars.venus;
-import mars.*;
-import javax.swing.*;
+
 import java.io.*;
-
-/*
-Copyright (c) 2003-2007,  Pete Sanderson and Kenneth Vollmar
-
-Developed by Pete Sanderson (psanderson@otterbein.edu)
-and Kenneth Vollmar (kenvollmar@missouristate.edu)
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject
-to the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-(MIT license, http://www.opensource.org/licenses/mit-license.html)
-*/
 
 /**
  * Manage the file being edited.
  * Currently only manages one file at a time, but can be expanded.
  */
 
-public class Editor
-{
+public class Editor {
 
 	public static final int MIN_TAB_SIZE = 1;
 	public static final int MAX_TAB_SIZE = 32;
-	public static final int MIN_BLINK_RATE = 0;     // no flashing
-	public static final int MAX_BLINK_RATE = 1000;  // once per second
+	public static final int MIN_BLINK_RATE = 0; // no flashing
+	public static final int MAX_BLINK_RATE = 1000; // once per second
 
 	private VenusUI mainUI;
 	private EditTabbedPane editTabbedPane;
@@ -61,8 +31,7 @@ public class Editor
 	 *
 	 * @param ui the GUI that owns this editor
 	 */
-	public Editor(VenusUI ui)
-	{
+	public Editor(VenusUI ui) {
 		mainUI = ui;
 		FileStatus.reset();
 		mainUIbaseTitle = mainUI.getTitle();
@@ -79,8 +48,7 @@ public class Editor
 	 *
 	 * @param editTabbedPane an existing editTabbedPane object
 	 */
-	public void setEditTabbedPane(EditTabbedPane editTabbedPane)
-	{
+	public void setEditTabbedPane(EditTabbedPane editTabbedPane) {
 		this.editTabbedPane = editTabbedPane;
 	}
 
@@ -92,8 +60,7 @@ public class Editor
 	*   no Opens have been performed.
 	*/
 
-	public String getCurrentOpenDirectory()
-	{
+	public String getCurrentOpenDirectory() {
 		return currentOpenDirectory;
 	}
 
@@ -105,16 +72,13 @@ public class Editor
 	*  it does not exist or is not a directory, the default (MARS launch directory) will be used.
 	*/
 
-	void setCurrentOpenDirectory(String currentOpenDirectory)
-	{
+	void setCurrentOpenDirectory(String currentOpenDirectory) {
 		File file = new File(currentOpenDirectory);
-		if(!file.exists() || !file.isDirectory())
+		if (!file.exists() || !file.isDirectory())
 			this.currentOpenDirectory = defaultOpenDirectory;
 		else
 			this.currentOpenDirectory = currentOpenDirectory;
 	}
-
-
 
 	/**
 	 *  Get name of current directory for Save or Save As operation.
@@ -124,8 +88,7 @@ public class Editor
 	*   no Save or Save As operations have been performed.
 	*/
 
-	public String getCurrentSaveDirectory()
-	{
+	public String getCurrentSaveDirectory() {
 		return currentSaveDirectory;
 	}
 
@@ -137,27 +100,23 @@ public class Editor
 	*  it does not exist or is not a directory, the default (MARS launch directory) will be used.
 	*/
 
-	void setCurrentSaveDirectory(String currentSaveDirectory)
-	{
+	void setCurrentSaveDirectory(String currentSaveDirectory) {
 		File file = new File(currentSaveDirectory);
-		if(!file.exists() || !file.isDirectory())
+		if (!file.exists() || !file.isDirectory())
 			this.currentSaveDirectory = defaultSaveDirectory;
 		else
 			this.currentSaveDirectory = currentSaveDirectory;
 	}
-
 
 	/**
 	* Generates a default file name
 	*
 	* @return returns string mipsN.asm, where N is 1,2,3,...
 	*/
-	public String getNextDefaultFilename()
-	{
+	public String getNextDefaultFilename() {
 		newUsageCount++;
 		return "mips" + newUsageCount + ".asm";
 	}
-
 
 	/** Places name of file currently being edited into its edit tab and
 	*  the application's title bar.  The edit tab will contain only
@@ -172,12 +131,10 @@ public class Editor
 	*  @param name Name of file (last component of path)
 	*  @param status Edit status of file.  See FileStatus static constants.
 	*/
-	public void setTitle(String path, String name, int status)
-	{
-		if(status == FileStatus.NO_FILE || name == null || name.length() == 0)
+	public void setTitle(String path, String name, int status) {
+		if (status == FileStatus.NO_FILE || name == null || name.length() == 0)
 			mainUI.setTitle(mainUIbaseTitle);
-		else
-		{
+		else {
 			String edited = (status == FileStatus.NEW_EDITED || status == FileStatus.EDITED) ? "*" : " ";
 			String titleName = (status == FileStatus.NEW_EDITED || status == FileStatus.NEW_NOT_EDITED) ? name : path;
 			mainUI.setTitle(titleName + edited + " - " + mainUIbaseTitle);
@@ -185,13 +142,10 @@ public class Editor
 		}
 	}
 
-
-
 	/**
 	 *  Perform "new" operation to create an empty tab.
 	 */
-	public void newFile()
-	{
+	public void newFile() {
 		editTabbedPane.newFile();
 	}
 
@@ -199,8 +153,7 @@ public class Editor
 	 *  Perform "close" operation on current tab's file.
 	 *  @return true if succeeded, else false.
 	 */
-	public boolean close()
-	{
+	public boolean close() {
 		return editTabbedPane.closeCurrentFile();
 	}
 
@@ -208,8 +161,7 @@ public class Editor
 	 *  Close all currently open files.
 	 *  @return true if succeeded, else false.
 	 */
-	public boolean closeAll()
-	{
+	public boolean closeAll() {
 		return editTabbedPane.closeAllFiles();
 	}
 
@@ -217,8 +169,7 @@ public class Editor
 	 *  Perform "save" operation on current tab's file.
 	 *  @return true if succeeded, else false.
 	 */
-	public boolean save()
-	{
+	public boolean save() {
 		return editTabbedPane.saveCurrentFile();
 	}
 
@@ -226,8 +177,7 @@ public class Editor
 	 *  Perform "save as" operation on current tab's file.
 	 *  @return true if succeeded, else false.
 	 */
-	public boolean saveAs()
-	{
+	public boolean saveAs() {
 		return editTabbedPane.saveAsCurrentFile();
 	}
 
@@ -235,8 +185,7 @@ public class Editor
 	 *  Perform save operation on all open files (tabs).
 	 *  @return true if succeeded, else false.
 	 */
-	public boolean saveAll()
-	{
+	public boolean saveAll() {
 		return editTabbedPane.saveAllFiles();
 	}
 
@@ -244,8 +193,7 @@ public class Editor
 	 *  Open file in a new tab.
 	 *  @return true if succeeded, else false.
 	 */
-	public boolean open()
-	{
+	public boolean open() {
 		return editTabbedPane.openFile();
 	}
 
@@ -253,12 +201,9 @@ public class Editor
 	 *  Open file in a new tab.
 	 *  @return true if succeeded, else false.
 	 */
-	public boolean open(File file)
-	{
+	public boolean open(File file) {
 		return editTabbedPane.openFile(file);
 	}
-
-
 
 	/**
 	 * Called by several of the Action objects when there is potential
@@ -271,8 +216,7 @@ public class Editor
 	 * @return false means user selected Cancel so caller should do that.
 	 * Return of true means caller can proceed (edits were saved or discarded).
 	 */
-	public boolean editsSavedOrAbandoned()
-	{
+	public boolean editsSavedOrAbandoned() {
 		return editTabbedPane.editsSavedOrAbandoned();
 	}
 

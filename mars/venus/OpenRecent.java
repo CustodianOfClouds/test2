@@ -1,14 +1,7 @@
-/* Copyright (c) 2010, Carl Burch. License information is located in the
- * com.cburch.logisim.Main source code and at www.cburch.com/logisim/. */
-// adapted for MARS
-
 package mars.venus;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,11 +11,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import mars.Globals;
-import mars.Settings;
 
-// import com.cburch.logisim.prefs.AppPreferences;
-
-class OpenRecent extends JMenu { // implements PropertyChangeListener {
+class OpenRecent extends JMenu {
 	private static final int MAX_ITEM_LENGTH = 50;
 
 	private class RecentItem extends JMenuItem implements ActionListener {
@@ -40,13 +30,10 @@ class OpenRecent extends JMenu { // implements PropertyChangeListener {
 		}
 	}
 
-	// private LogisimMenuBar menubar;
 	private List<RecentItem> recentItems;
 
 	OpenRecent(/*LogisimMenuBar menubar*/) {
-		// this.menubar = menubar;
 		this.recentItems = new ArrayList<RecentItem>();
-		// AppPreferences.addPropertyChangeListener(AppPreferences.RECENT_PROJECTS, this);
 		renewItems();
 		localeChanged();
 	}

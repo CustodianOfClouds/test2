@@ -1,9 +1,10 @@
 package mars.venus;
+
 import java.awt.*;
 import java.util.*;
 
 /*
-HUGE thank you to Rob Camick for this code.
+Code from
 https://tips4java.wordpress.com/2008/11/02/relative-layout/
 
 Archived at:
@@ -36,8 +37,7 @@ https://web.archive.org/web/20170719033626/https://tips4java.wordpress.com/2008/
  *  By defaults components are center aligned on the secondary axis
  *  however this can be changed at the container or component level.
  */
-public class RelativeLayout implements LayoutManager2, java.io.Serializable
-{
+public class RelativeLayout implements LayoutManager2, java.io.Serializable {
 	//  Used in the constructor
 	public final static int X_AXIS = 0;
 	public final static int Y_AXIS = 1;
@@ -98,8 +98,7 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 * Creates a relative layout with the components layed out on the X-Axis
 	 *  using the default gap
 	 */
-	public RelativeLayout()
-	{
+	public RelativeLayout() {
 		this(X_AXIS, 0);
 	}
 
@@ -109,8 +108,7 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 * <p>
 	 * @param	 axis  X-AXIS or Y_AXIS
 	 */
-	public RelativeLayout(int axis)
-	{
+	public RelativeLayout(int axis) {
 		this(axis, 0);
 	}
 
@@ -122,19 +120,17 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 * @param	 axis  X-AXIS or Y_AXIS
 	 * @param	 gap   the gap
 	 */
-	public RelativeLayout(int axis, int gap)
-	{
-		setAxis( axis );
-		setGap( gap );
-		setBorderGap( gap );
+	public RelativeLayout(int axis, int gap) {
+		setAxis(axis);
+		setGap(gap);
+		setBorderGap(gap);
 	}
 
 	/**
 	 *  Gets the layout axis.
 	 *  @return	   the layout axis
 	 */
-	public int getAxis()
-	{
+	public int getAxis() {
 		return axis;
 	}
 
@@ -142,10 +138,9 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 *  Sets the layout axis
 	 *  @param		axis   the layout axis
 	 */
-	public void setAxis(int axis)
-	{
+	public void setAxis(int axis) {
 		if (axis != X_AXIS
-		&&  axis != Y_AXIS)
+				&& axis != Y_AXIS)
 			throw new IllegalArgumentException("invalid axis specified");
 
 		this.axis = axis;
@@ -155,8 +150,7 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 *  Gets the gap between components.
 	 *  @return	   the gap between components
 	 */
-	public int getGap()
-	{
+	public int getGap() {
 		return gap;
 	}
 
@@ -164,8 +158,7 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 *  Sets the gap between components to the specified value.
 	 *  @param		gap   the gap between components
 	 */
-	public void setGap(int gap)
-	{
+	public void setGap(int gap) {
 		this.gap = gap < 0 ? 0 : gap;
 	}
 
@@ -175,8 +168,7 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 *
 	 *  @return	   the leading/trailing gap
 	 */
-	public int getBorderGap()
-	{
+	public int getBorderGap() {
 		return borderGap;
 	}
 
@@ -186,8 +178,7 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 *
 	 *  @param borderGap  the leading/trailing gap
 	 */
-	public void setBorderGap(int borderGap)
-	{
+	public void setBorderGap(int borderGap) {
 		this.borderGap = borderGap < 0 ? 0 : borderGap;
 	}
 
@@ -195,8 +186,7 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 *  Gets the alignment of the components on the opposite axis.
 	 *  @return	   the alignment
 	 */
-	public float getAlignment()
-	{
+	public float getAlignment() {
 		return alignment;
 	}
 
@@ -214,8 +204,7 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 *  RelativeLayout.COMPONENT - the getAlignemntX/Y method for the
 	 *							 opposite axis will be used
 	 */
-	public void setAlignment(float alignment)
-	{
+	public void setAlignment(float alignment) {
 		this.alignment = alignment > 1.0f ? 1.0f : alignment < 0.0f ? -1.0f : alignment;
 	}
 
@@ -223,8 +212,7 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 *  Gets the fill property for the component size on the opposite edge.
 	 *  @return	   the fill property
 	 */
-	public boolean isFill()
-	{
+	public boolean isFill() {
 		return fill;
 	}
 
@@ -233,8 +221,7 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 *  For X-AXIS aligned components the height will be filled.
 	 *  For Y-AXIS aligned components the width will be filled.
 	 */
-	public void setFill(boolean fill)
-	{
+	public void setFill(boolean fill) {
 		this.fill = fill;
 	}
 
@@ -242,8 +229,7 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 *  Gets the fill gap amount.
 	 *  @return	   the fill gap value
 	 */
-	public int getFillGap()
-	{
+	public int getFillGap() {
 		return fillGap;
 	}
 
@@ -251,8 +237,7 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 *  Specify the number of pixels by which the fill size is decreased when
 	 *  setFill(true) has been specified.
 	 */
-	public void setFillGap(int fillGap)
-	{
+	public void setFillGap(int fillGap) {
 		this.fillGap = fillGap;
 	}
 
@@ -260,8 +245,7 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 *  Gets the rounding policy.
 	 *  @return	   the rounding policy
 	 */
-	public int getRoundingPolicy()
-	{
+	public int getRoundingPolicy() {
 		return roundingPolicy;
 	}
 
@@ -276,8 +260,7 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 *  EQUAL - a single pixel is added to each relative component
 	 *		  (until pixels are used up)
 	 */
-	public void setRoundingPolicy(int roundingPolicy)
-	{
+	public void setRoundingPolicy(int roundingPolicy) {
 		this.roundingPolicy = roundingPolicy;
 	}
 
@@ -287,27 +270,24 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 *  @param   component the component to be queried
 	 *  @return  the constraint for the specified component, or null
 	 *           if component is null or is not present in this layout
-     */
-    public Float getConstraints(Component component)
-    {
-    	return (Float)constraints.get(component);
-    }
+	 */
+	public Float getConstraints(Component component) {
+		return (Float) constraints.get(component);
+	}
 
 	/**
 	 *  Not supported
 	 */
-	public void addLayoutComponent(String name, Component component) {}
+	public void addLayoutComponent(String name, Component component) {
+	}
 
-	 /*
-	  *	Keep track of any specified constraint for the component.
-	  */
-	public void addLayoutComponent(Component component, Object constraint)
-	{
-		if (constraint == null || constraint instanceof Float)
-		{
-			constraints.put(component, (Float)constraint);
-		}
-		else
+	/*
+	 *	Keep track of any specified constraint for the component.
+	 */
+	public void addLayoutComponent(Component component, Object constraint) {
+		if (constraint == null || constraint instanceof Float) {
+			constraints.put(component, (Float) constraint);
+		} else
 			throw new IllegalArgumentException("Constraint parameter must be of type Float");
 	}
 
@@ -315,7 +295,8 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 * Removes the specified component from the layout.
 	 * @param comp the component to be removed
 	 */
-	public void removeLayoutComponent(Component comp) {}
+	public void removeLayoutComponent(Component comp) {
+	}
 
 	/**
 	 * Determines the preferred size of the container argument using
@@ -337,10 +318,8 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 * @see	   java.awt.RelativeLayout#minimumLayoutSize
 	 * @see	   java.awt.Container#getPreferredSize()
 	 */
-	public Dimension preferredLayoutSize(Container parent)
-	{
-		synchronized (parent.getTreeLock())
-		{
+	public Dimension preferredLayoutSize(Container parent) {
+		synchronized (parent.getTreeLock()) {
 			return getLayoutSize(parent, PREFERRED);
 		}
 	}
@@ -365,10 +344,8 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 * @see		 java.awt.RelativeLayout#preferredLayoutSize
 	 * @see		 java.awt.Container#doLayout
 	 */
-	public Dimension minimumLayoutSize(Container parent)
-	{
-		synchronized (parent.getTreeLock())
-		{
+	public Dimension minimumLayoutSize(Container parent) {
+		synchronized (parent.getTreeLock()) {
 			return getLayoutSize(parent, MINIMUM);
 		}
 	}
@@ -391,10 +368,8 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 * @see		java.awt.Container
 	 * @see		java.awt.Container#doLayout
 	 */
-	public void layoutContainer(Container parent)
-	{
-		synchronized (parent.getTreeLock())
-		{
+	public void layoutContainer(Container parent) {
+		synchronized (parent.getTreeLock()) {
 			if (axis == X_AXIS)
 				layoutContainerHorizontally(parent);
 			else
@@ -405,38 +380,35 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	/*
 	 *  Lay out all the components in the Container along the X-Axis
 	 */
-	private void layoutContainerHorizontally(Container parent)
-	{
+	private void layoutContainerHorizontally(Container parent) {
 		int components = parent.getComponentCount();
-		int visibleComponents = getVisibleComponents( parent );
+		int visibleComponents = getVisibleComponents(parent);
 
-		if (components == 0) return;
+		if (components == 0)
+			return;
 
 		//  Determine space available for components using relative sizing
 
 		float relativeTotal = 0.0f;
 		Insets insets = parent.getInsets();
 		int spaceAvailable = parent.getSize().width
-						   - insets.left
-						   - insets.right
-						   - ((visibleComponents - 1) * gap)
-						   - (2 * borderGap);
+				- insets.left
+				- insets.right
+				- ((visibleComponents - 1) * gap)
+				- (2 * borderGap);
 
-		for (int i = 0 ; i < components ; i++)
-		{
+		for (int i = 0; i < components; i++) {
 			Component component = parent.getComponent(i);
 
-			if (! component.isVisible()) continue;
+			if (!component.isVisible())
+				continue;
 
 			Float constraint = constraints.get(component);
 
-			if (constraint == null)
-			{
+			if (constraint == null) {
 				Dimension d = component.getPreferredSize();
 				spaceAvailable -= d.width;
-			}
-			else
-			{
+			} else {
 				relativeTotal += constraint.doubleValue();
 			}
 		}
@@ -452,11 +424,11 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 		int insetGap = insets.top + insets.bottom;
 		int parentHeight = parent.getSize().height - insetGap;
 
-		for (int i = 0 ; i < components ; i++)
-		{
+		for (int i = 0; i < components; i++) {
 			Component component = parent.getComponent(i);
 
-			if (! component.isVisible()) continue;
+			if (!component.isVisible())
+				continue;
 
 			if (i > 0)
 				x += gap;
@@ -468,15 +440,12 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 
 			Float constraint = constraints.get(component);
 
-			if (constraint == null)
-			{
-				component.setSize( d );
+			if (constraint == null) {
+				component.setSize(d);
 				int locationY = getLocationY(component, parentHeight) + y;
 				component.setLocation(x, locationY);
 				x += d.width;
-			}
-			else
-			{
+			} else {
 				int width = relativeSpace[i];
 				component.setSize(width, d.height);
 				int locationY = getLocationY(component, parentHeight) + y;
@@ -489,8 +458,7 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	/*
 	 *  Align the component on the Y-Axis
 	 */
-	private int getLocationY(Component component, int height)
-	{
+	private int getLocationY(Component component, int height) {
 		//  Use the Container alignment policy
 
 		float alignmentY = alignment;
@@ -501,44 +469,41 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 			alignmentY = component.getAlignmentY();
 
 		float y = (height - component.getSize().height) * alignmentY;
-		return (int)y;
+		return (int) y;
 	}
 
 	/*
 	 *  Lay out all the components in the Container along the Y-Axis
 	 */
-	private void layoutContainerVertically(Container parent)
-	{
+	private void layoutContainerVertically(Container parent) {
 		int components = parent.getComponentCount();
-		int visibleComponents = getVisibleComponents( parent );
+		int visibleComponents = getVisibleComponents(parent);
 
-		if (components == 0) return;
+		if (components == 0)
+			return;
 
 		//  Determine space available for components using relative sizing
 
 		float relativeTotal = 0.0f;
 		Insets insets = parent.getInsets();
 		int spaceAvailable = parent.getSize().height
-						   - insets.top
-						   - insets.bottom
-						   - ((visibleComponents - 1) * gap)
-						   - (2 * borderGap);
+				- insets.top
+				- insets.bottom
+				- ((visibleComponents - 1) * gap)
+				- (2 * borderGap);
 
-		for (int i = 0 ; i < components ; i++)
-		{
+		for (int i = 0; i < components; i++) {
 			Component component = parent.getComponent(i);
 
-			if (! component.isVisible()) continue;
+			if (!component.isVisible())
+				continue;
 
 			Float constraint = constraints.get(component);
 
-			if (constraint == null)
-			{
+			if (constraint == null) {
 				Dimension d = component.getPreferredSize();
 				spaceAvailable -= d.height;
-			}
-			else
-			{
+			} else {
 				relativeTotal += constraint.doubleValue();
 			}
 		}
@@ -554,11 +519,11 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 		int insetGap = insets.left + insets.right;
 		int parentWidth = parent.getSize().width - insetGap;
 
-		for (int i = 0 ; i < components ; i++)
-		{
+		for (int i = 0; i < components; i++) {
 			Component component = parent.getComponent(i);
 
-			if (! component.isVisible()) continue;
+			if (!component.isVisible())
+				continue;
 
 			if (i > 0)
 				y += gap;
@@ -570,15 +535,12 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 
 			Float constraint = constraints.get(component);
 
-			if (constraint == null)
-			{
-				component.setSize( d );
+			if (constraint == null) {
+				component.setSize(d);
 				int locationX = getLocationX(component, parentWidth) + x;
 				component.setLocation(locationX, y);
 				y += d.height;
-			}
-			else
-			{
+			} else {
 				int height = relativeSpace[i];
 				component.setSize(d.width, height);
 				int locationX = getLocationX(component, parentWidth) + x;
@@ -592,8 +554,7 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	/*
 	 *  Align the component on the X-Axis
 	 */
-	private int getLocationX(Component component, int width)
-	{
+	private int getLocationX(Component component, int width) {
 		//  Use the Container alignment policy
 
 		float alignmentX = alignment;
@@ -604,30 +565,26 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 			alignmentX = component.getAlignmentX();
 
 		float x = (width - component.getSize().width) * alignmentX;
-		return (int)x;
+		return (int) x;
 	}
 
 	/*
 	 *  Allocate the space available to each component using relative sizing
 	 */
-	private int[] allocateRelativeSpace(Container parent, int spaceAvailable, float relativeTotal)
-	{
+	private int[] allocateRelativeSpace(Container parent, int spaceAvailable, float relativeTotal) {
 		int spaceUsed = 0;
 		int components = parent.getComponentCount();
 		int[] relativeSpace = new int[components];
 
-		for (int i = 0 ; i < components ; i++)
-		{
+		for (int i = 0; i < components; i++) {
 			relativeSpace[i] = 0;
 
-			if (relativeTotal > 0 && spaceAvailable > 0)
-			{
+			if (relativeTotal > 0 && spaceAvailable > 0) {
 				Component component = parent.getComponent(i);
 				Float constraint = constraints.get(component);
 
-				if (constraint != null)
-				{
-					int space = (int)(Math.round(spaceAvailable * constraint.floatValue() / relativeTotal));
+				if (constraint != null) {
+					int space = (int) (Math.round(spaceAvailable * constraint.floatValue() / relativeTotal));
 					relativeSpace[i] = space;
 					spaceUsed += space;
 				}
@@ -646,10 +603,8 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 *  Because of rounding, all the space has not been allocated
 	 *  Override this method to create a custom rounding policy
 	 */
-	protected void adjustForRounding(int[] relativeSpace, int spaceRemaining)
-	{
-		switch(roundingPolicy)
-		{
+	protected void adjustForRounding(int[] relativeSpace, int spaceRemaining) {
+		switch (roundingPolicy) {
 			case DO_NOTHING:
 				break;
 			case FIRST:
@@ -672,12 +627,9 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	/*
 	 *	First component using relative sizing gets all the space
 	 */
-	private void adjustFirst(int[] relativeSpace, int spaceRemaining)
-	{
-		for (int i = 0; i < relativeSpace.length; i++)
-		{
-			if (relativeSpace[i] > 0)
-			{
+	private void adjustFirst(int[] relativeSpace, int spaceRemaining) {
+		for (int i = 0; i < relativeSpace.length; i++) {
+			if (relativeSpace[i] > 0) {
 				relativeSpace[i] += spaceRemaining;
 				break;
 			}
@@ -687,12 +639,9 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	/*
 	 *	Last component using relative sizing gets all the space
 	 */
-	private void adjustLast(int[] relativeSpace, int spaceRemaining)
-	{
-		for (int i = relativeSpace.length - 1; i > 0; i--)
-		{
-			if (relativeSpace[i] > 0)
-			{
+	private void adjustLast(int[] relativeSpace, int spaceRemaining) {
+		for (int i = relativeSpace.length - 1; i > 0; i--) {
+			if (relativeSpace[i] > 0) {
 				relativeSpace[i] += spaceRemaining;
 				break;
 			}
@@ -703,19 +652,15 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 *	Largest component using relative sizing gets all the space.
 	 *  When multiple components are the same size, the last one found is used.
 	 */
-	private void adjustLargest(int[] relativeSpace, int spaceRemaining)
-	{
+	private void adjustLargest(int[] relativeSpace, int spaceRemaining) {
 		int largest = 0;
 		int largestSpace = 0;
 
-		for (int i = 0; i < relativeSpace.length; i++)
-		{
+		for (int i = 0; i < relativeSpace.length; i++) {
 			int space = relativeSpace[i];
 
-			if (space > 0)
-			{
-				if (largestSpace <= space)
-				{
+			if (space > 0) {
+				if (largestSpace <= space) {
 					largestSpace = space;
 					largest = i;
 				}
@@ -729,19 +674,13 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 *	Each component using relative sizing gets 1 more pixel
 	 *  until all the space is used, starting with the first.
 	 */
-	private void adjustEqual(int[] relativeSpace, int spaceRemaining)
-	{
-		for (int i = 0; i < relativeSpace.length; i++)
-		{
-			if (relativeSpace[i] > 0)
-			{
-				if (spaceRemaining > 0)
-				{
+	private void adjustEqual(int[] relativeSpace, int spaceRemaining) {
+		for (int i = 0; i < relativeSpace.length; i++) {
+			if (relativeSpace[i] > 0) {
+				if (spaceRemaining > 0) {
 					relativeSpace[i]++;
 					spaceRemaining--;
-				}
-				else
-				{
+				} else {
 					relativeSpace[i]--;
 					spaceRemaining++;
 				}
@@ -755,28 +694,24 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	/*
 	 *	Determine the Preferred or Minimum layout size
 	 */
-	private Dimension getLayoutSize(Container parent, int type)
-	{
+	private Dimension getLayoutSize(Container parent, int type) {
 		int width = 0;
 		int height = 0;
 		int components = parent.getComponentCount();
-		int visibleComponents = getVisibleComponents( parent );
+		int visibleComponents = getVisibleComponents(parent);
 
-		for (int i = 0 ; i < components ; i++)
-		{
+		for (int i = 0; i < components; i++) {
 			Component component = parent.getComponent(i);
 
-			if (! component.isVisible()) continue;
+			if (!component.isVisible())
+				continue;
 
 			Dimension d = getDimension(component, type);
 
-			if (axis == X_AXIS)
-			{
+			if (axis == X_AXIS) {
 				width += d.width;
 				height = Math.max(height, d.height);
-			}
-			else
-			{
+			} else {
 				width = Math.max(width, d.width);
 				height += d.height;
 			}
@@ -785,13 +720,10 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 		Insets insets = parent.getInsets();
 		int totalGap = ((visibleComponents - 1) * gap) + (2 * borderGap);
 
-		if (axis == X_AXIS)
-		{
+		if (axis == X_AXIS) {
 			width += insets.left + insets.right + totalGap;
 			height += insets.top + insets.bottom;
-		}
-		else
-		{
+		} else {
 			width += insets.left + insets.right;
 			height += insets.top + insets.bottom + totalGap;
 		}
@@ -800,50 +732,46 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 		return size;
 	}
 
-	private int getVisibleComponents(Container container)
-	{
+	private int getVisibleComponents(Container container) {
 		int visibleComponents = 0;
 
-		for (Component component : container.getComponents())
-		{
-        	if (component.isVisible())
-        		visibleComponents++;
+		for (Component component : container.getComponents()) {
+			if (component.isVisible())
+				visibleComponents++;
 		}
 
 		return visibleComponents;
 	}
 
-	private Dimension getDimension(Component component, int type)
-	{
-		switch (type)
-		{
-			case PREFERRED: return component.getPreferredSize();
-			case MINIMUM:   return component.getMinimumSize();
-			default: return new Dimension(0, 0);
+	private Dimension getDimension(Component component, int type) {
+		switch (type) {
+			case PREFERRED:
+				return component.getPreferredSize();
+			case MINIMUM:
+				return component.getMinimumSize();
+			default:
+				return new Dimension(0, 0);
 		}
 	}
 
 	/**
 	 * There is no maximum.
 	 */
-	public Dimension maximumLayoutSize(Container target)
-	{
+	public Dimension maximumLayoutSize(Container target) {
 		return new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE);
 	}
 
 	/**
 	 * Returns the alignment along the x axis.  Use center alignment.
 	 */
-	public float getLayoutAlignmentX(Container parent)
-	{
+	public float getLayoutAlignmentX(Container parent) {
 		return 0.5f;
 	}
 
 	/**
 	 * Returns the alignment along the y axis.  Use center alignment.
 	 */
-	public float getLayoutAlignmentY(Container parent)
-	{
+	public float getLayoutAlignmentY(Container parent) {
 		return 0.5f;
 	}
 
@@ -851,8 +779,7 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 * Invalidates the layout, indicating that if the layout manager
 	 * has cached information it should be discarded.
 	 */
-	public void invalidateLayout(Container target)
-	{
+	public void invalidateLayout(Container target) {
 		// remove constraints here?
 	}
 
@@ -860,11 +787,10 @@ public class RelativeLayout implements LayoutManager2, java.io.Serializable
 	 * Returns the string representation of this column layout's values.
 	 * @return	 a string representation of this grid layout
 	 */
-	public String toString()
-	{
+	public String toString() {
 		return getClass().getName()
-			+ "[axis=" + axis
-			+ ",gap=" + gap
-			+ "]";
+				+ "[axis=" + axis
+				+ ",gap=" + gap
+				+ "]";
 	}
 }

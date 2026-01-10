@@ -1,33 +1,5 @@
 package mars.simulator;
 
-/*
-Copyright (c) 2003-2007,  Pete Sanderson and Kenneth Vollmar
-
-Developed by Pete Sanderson (psanderson@otterbein.edu)
-and Kenneth Vollmar (kenvollmar@missouristate.edu)
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject
-to the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-(MIT license, http://www.opensource.org/licenses/mit-license.html)
- */
-
 /**
  * Represents a (potential) delayed branch.  Note it is necessary only when
  * delayed branching is enabled.  Here's the protocol for using it:
@@ -55,16 +27,15 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * Since only one pending delayed branch can be taken at a time, everything
  * here is done with statics.  The class itself represents the potential branch.
  *
- * @author Pete Sanderson
- * @version June 2007
+ * @author CC
+ * @version the big 26
  **/
 
-public class DelayedBranch
-{
+public class DelayedBranch {
 	// Class states.
-	private static final int CLEARED    = 0;
+	private static final int CLEARED = 0;
 	private static final int REGISTERED = 1;
-	private static final int TRIGGERED  = 2;
+	private static final int TRIGGERED = 2;
 
 	// Initially nothing is happening.
 
@@ -82,15 +53,13 @@ public class DelayedBranch
 	 *
 	 *  @param targetAddress The address to branch to after executing the next instruction
 	 */
-	public static void register(int targetAddress)
-	{
+	public static void register(int targetAddress) {
 		// About as clean as a switch statement can be!
-		switch(state)
-		{
-			case CLEARED    :
+		switch (state) {
+			case CLEARED:
 				branchTargetAddress = targetAddress;
-			case REGISTERED :
-			case TRIGGERED  :
+			case REGISTERED:
+			case TRIGGERED:
 				state = REGISTERED;
 		}
 	}
@@ -107,15 +76,13 @@ public class DelayedBranch
 	 *  Postcondition: DelayedBranch.isTriggered() && !DelayedBranch.isRegistered()
 	 *
 	 */
-	static void trigger()
-	{
+	static void trigger() {
 		// About as clean as a switch statement can be!
-		switch(state)
-		{
-			case REGISTERED :
-			case TRIGGERED  :
+		switch (state) {
+			case REGISTERED:
+			case TRIGGERED:
 				state = TRIGGERED;
-			case CLEARED    :
+			case CLEARED:
 		}
 	}
 
@@ -123,8 +90,7 @@ public class DelayedBranch
 	*  Clear the delayed branch. This must be done immediately after setting the
 	 *  program counter to the target address.  This method has package visibility.
 	 */
-	static void clear()
-	{
+	static void clear() {
 		state = CLEARED;
 		branchTargetAddress = 0;
 	}
@@ -137,8 +103,7 @@ public class DelayedBranch
 	 *  @return true if branch is registered but not triggered, false otherwise.
 	 */
 
-	static boolean isRegistered()
-	{
+	static boolean isRegistered() {
 		return state == REGISTERED;
 	}
 
@@ -149,11 +114,9 @@ public class DelayedBranch
 	 *  @return true if branch is registered but not triggered, false otherwise.
 	 */
 
-	static boolean isTriggered()
-	{
+	static boolean isTriggered() {
 		return state == TRIGGERED;
 	}
-
 
 	/**
 	 *  Return branch target address.  This should be retrieved only to set the program
@@ -163,9 +126,8 @@ public class DelayedBranch
 	*
 	*  @return Target address of the delayed branch.
 	*/
-	static int getBranchTargetAddress()
-	{
+	static int getBranchTargetAddress() {
 		return branchTargetAddress;
 	}
 
-}  // DelayedBranch
+} // DelayedBranch

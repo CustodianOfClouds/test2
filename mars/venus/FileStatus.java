@@ -1,43 +1,15 @@
 package mars.venus;
+
 import mars.*;
 import java.io.*;
-
-/*
-Copyright (c) 2003-2006,  Pete Sanderson and Kenneth Vollmar
-
-Developed by Pete Sanderson (psanderson@otterbein.edu)
-and Kenneth Vollmar (kenvollmar@missouristate.edu)
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject
-to the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-(MIT license, http://www.opensource.org/licenses/mit-license.html)
- */
 
 /**
   *  Used to store and return information on the status of the current ASM file that
   *  is being edited in the program.
-  *   @author Team JSpim
+  *   @author CC
   **/
 
-public class FileStatus
-{
+public class FileStatus {
 	/** initial state or after close */
 	public static final int NO_FILE = 0;
 	/** New edit window with no edits */
@@ -54,21 +26,12 @@ public class FileStatus
 	public static final int RUNNING = 6;
 	/** execution terminated */
 	public static final int TERMINATED = 7;
-	/** file is being opened.  DPS 9-Aug-2011 */
+	/** file is being opened.  9-Aug-2011 */
 	public static final int OPENING = 8;
-
 
 	///////////////////////////////////////////////////////////////////
 	//                                                               //
-	//  The static part.  Legacy code from original student team's   //
-	//  2003 Practicum project through MARS 3.8, when the editor     //
-	//  was limited to one file.  The status of that file became     //
-	//  the de facto status of the system.  Should have used a       //
-	//  singleton class but in 2003 did not know what that was!      //
-	//  My plan is to phase out all statics but the constants        //
-	//  in MARS 4.0 but will keep it in place while at the same time //
-	//  defining non-static members for use by individual files      //
-	//  currently opened in the editor.  DPS, 9 April 2010.          //
+	//  The static part.                                             //
 	//                                                               //
 	///////////////////////////////////////////////////////////////////
 
@@ -84,8 +47,7 @@ public class FileStatus
 	*
 	* @param newStatus  New status: EDITED, RUNNABLE, etc, see list above.
 	*/
-	public static void set(int newStatus)
-	{
+	public static void set(int newStatus) {
 		systemStatus = newStatus;
 		Globals.getGui().setMenuState(systemStatus);
 	}
@@ -95,8 +57,7 @@ public class FileStatus
 	*
 	* @return file status EDITED, RUNNABLE, etc, see list above
 	*/
-	public static int get()
-	{
+	public static int get() {
 		return systemStatus;
 	}
 
@@ -104,8 +65,7 @@ public class FileStatus
 	*  Changes the value of assenbked to the parameter given.
 	*   @param b boolean variable that tells what to set assembled to.
 	*/
-	public static void setAssembled(boolean b)
-	{
+	public static void setAssembled(boolean b) {
 		systemAssembled = b;
 	}
 
@@ -113,8 +73,7 @@ public class FileStatus
 	  *  Changes the value of saved to the parameter given.
 	  *   @param b boolean variable that tells what to set saved to .
 	  */
-	public static void setSaved(boolean b)
-	{
+	public static void setSaved(boolean b) {
 		systemSaved = b;
 	}
 
@@ -122,8 +81,7 @@ public class FileStatus
 	*  Changes the value of edited to the parameter given.
 	*   @param b boolean variable that tells what to set edited to.
 	*/
-	public static void setEdited(boolean b)
-	{
+	public static void setEdited(boolean b) {
 		systemEdited = b;
 	}
 
@@ -131,8 +89,7 @@ public class FileStatus
 	*  Changes the value of name to the parameter given.
 	*   @param s string variable tells what to set the name of the file to .
 	*/
-	public static void setName(String s)
-	{
+	public static void setName(String s) {
 		systemName = s;
 	}
 
@@ -140,8 +97,7 @@ public class FileStatus
 	  *  Sets the file to the ASM file passed.
 	  *   @param f file object variable that stores the ASM file.
 	  */
-	public static void setFile(File f)
-	{
+	public static void setFile(File f) {
 		systemFile = f;
 	}
 
@@ -149,8 +105,7 @@ public class FileStatus
 	*  Returns the ASM file.
 	*   @return The ASM file.
 	*/
-	public static File getFile()
-	{
+	public static File getFile() {
 		return systemFile;
 	}
 
@@ -158,8 +113,7 @@ public class FileStatus
 	  *  Returns the name of the file.
 	  *   @return The name of the ASM file.
 	  */
-	public static String getName()
-	{
+	public static String getName() {
 		return systemName;
 	}
 
@@ -167,8 +121,7 @@ public class FileStatus
 	  *  Tells whether the file has been assembled.
 	  *   @return Boolean value that is true if the ASM file has been assembled.
 	  */
-	public static boolean isAssembled()
-	{
+	public static boolean isAssembled() {
 		return systemAssembled;
 	}
 
@@ -176,8 +129,7 @@ public class FileStatus
 	  *  Tells whether the file has been saved.
 	  *   @return Boolean variable that is true if the ASM file has been saved
 	  */
-	public static boolean isSaved()
-	{
+	public static boolean isSaved() {
 		return systemSaved;
 	}
 
@@ -185,16 +137,14 @@ public class FileStatus
 	  *  Tells whether the file has been edited since it has been saved.
 	  *   @return Boolean value that returns true if the ASM file has been edited.
 	  */
-	public static boolean isEdited()
-	{
+	public static boolean isEdited() {
 		return systemEdited;
 	}
 
 	/**
 	  *  Resets all the values in FileStatus
 	  */
-	public static void reset()
-	{
+	public static void reset() {
 		systemStatus = NO_FILE;
 		systemName = "";
 		systemAssembled = false;
@@ -206,10 +156,8 @@ public class FileStatus
 	/////////////////////  END OF STATIC PART   ///////////////////////
 	///////////////////////////////////////////////////////////////////
 
-
 	// Remaining members are of instantiable class that can be used by
 	// every file that is currently open in the editor.
-
 
 	private int status;
 	private File file;
@@ -217,8 +165,7 @@ public class FileStatus
 	/**
 	*  Create a FileStatus object with FileStatis.NO_FILE for status and null for file getters.
 	*/
-	public FileStatus()
-	{
+	public FileStatus() {
 		this(FileStatus.NO_FILE, null);
 	}
 
@@ -228,10 +175,9 @@ public class FileStatus
 	*  @param status Initial file status.  See FileStatus static constants.
 	*  @param pathname Full file pathname. See setPathname(String newPath) below.
 	*/
-	public FileStatus(int status, String pathname)
-	{
+	public FileStatus(int status, String pathname) {
 		this.status = status;
-		if(pathname == null)
+		if (pathname == null)
 			this.file = null;
 		else
 			setPathname(pathname);
@@ -242,8 +188,7 @@ public class FileStatus
 	 *
 	 *  @param newStatus the new status
 	 */
-	public void setFileStatus(int newStatus)
-	{
+	public void setFileStatus(int newStatus) {
 		this.status = newStatus;
 	}
 
@@ -252,8 +197,7 @@ public class FileStatus
 	 *
 	 *  @return current editing status.  See FileStatus static constants.
 	 */
-	public int getFileStatus()
-	{
+	public int getFileStatus() {
 		return this.status;
 	}
 
@@ -263,8 +207,7 @@ public class FileStatus
 	 *
 	 *  @return true if file was created using New and has not yet been saved, false otherwise.
 	 */
-	public boolean isNew()
-	{
+	public boolean isNew() {
 		return status == FileStatus.NEW_NOT_EDITED || status == FileStatus.NEW_EDITED;
 	}
 
@@ -274,8 +217,7 @@ public class FileStatus
 	 *
 	 *  @return true if file has been modified since save or creation, false otherwise.
 	 */
-	public boolean hasUnsavedEdits()
-	{
+	public boolean hasUnsavedEdits() {
 		return status == FileStatus.NEW_EDITED || status == FileStatus.EDITED;
 	}
 
@@ -284,8 +226,7 @@ public class FileStatus
 	 *
 	 *  @param newPath the new pathname. If no directory path, getParent() will return null.
 	 */
-	public void setPathname(String newPath)
-	{
+	public void setPathname(String newPath) {
 		this.file = new File(newPath);
 	}
 
@@ -295,8 +236,7 @@ public class FileStatus
 	 *  @param parent the parent directory of the file.  If null, getParent() will return null.
 	 *  @param name the name of the file (no directory path)
 	 */
-	public void setPathname(String parent, String name)
-	{
+	public void setPathname(String parent, String name) {
 		this.file = new File(parent, name);
 	}
 
@@ -305,8 +245,7 @@ public class FileStatus
 	 *
 	 *  @return full pathname as a String.  Null if
 	 */
-	public String getPathname()
-	{
+	public String getPathname() {
 		return (this.file == null) ? null : this.file.getPath();
 	}
 
@@ -315,8 +254,7 @@ public class FileStatus
 	 *
 	 *  @return filename as a String
 	 */
-	public String getFilename()
-	{
+	public String getFilename() {
 		return (this.file == null) ? null : this.file.getName();
 	}
 
@@ -325,19 +263,16 @@ public class FileStatus
 	 *
 	 *  @return parent full pathname as a String
 	 */
-	public String getParent()
-	{
+	public String getParent() {
 		return (this.file == null) ? null : this.file.getParent();
 	}
-
 
 	/**
 	*  Update static FileStatus fields with values from this FileStatus object
 	*  To support legacy code that depends on the static.
 	*/
 
-	public void updateStaticFileStatus()
-	{
+	public void updateStaticFileStatus() {
 		systemStatus = this.status;
 		systemName = this.file.getPath();
 		systemAssembled = false;

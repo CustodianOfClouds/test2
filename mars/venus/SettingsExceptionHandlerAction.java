@@ -1,47 +1,17 @@
 package mars.venus;
-import mars.simulator.*;
+
 import mars.*;
-import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.text.*;
 import javax.swing.border.*;
 import java.io.*;
-
-/*
-Copyright (c) 2003-2006,  Pete Sanderson and Kenneth Vollmar
-
-Developed by Pete Sanderson (psanderson@otterbein.edu)
-and Kenneth Vollmar (kenvollmar@missouristate.edu)
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject
-to the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-(MIT license, http://www.opensource.org/licenses/mit-license.html)
-*/
 
 /**
  * Action class for the Settings menu item for optionally loading a MIPS exception handler.
  */
-public class SettingsExceptionHandlerAction extends GuiAction
-{
+@SuppressWarnings("deprecation")
+public class SettingsExceptionHandlerAction extends GuiAction {
 
 	JDialog exceptionHandlerDialog;
 	JCheckBox exceptionHandlerSetting;
@@ -49,39 +19,34 @@ public class SettingsExceptionHandlerAction extends GuiAction
 	JTextField exceptionHandlerDisplay;
 
 	boolean initialSelected; // state of check box when dialog initiated.
-	String initialPathname;  // selected exception handler when dialog initiated.
+	String initialPathname; // selected exception handler when dialog initiated.
 
 	public SettingsExceptionHandlerAction(String name, Icon icon, String descrip,
-										  Integer mnemonic, KeyStroke accel, VenusUI gui)
-	{
+			Integer mnemonic, KeyStroke accel, VenusUI gui) {
 		super(name, icon, descrip, mnemonic, accel, gui);
 	}
 
 	// launch dialog for setting and filename specification
-	public void actionPerformed(ActionEvent e)
-	{
+	public void actionPerformed(ActionEvent e) {
 		initialSelected = Globals.getSettings().getExceptionHandlerEnabled();
 		initialPathname = Globals.getSettings().getExceptionHandler();
 		exceptionHandlerDialog = new JDialog(Globals.getGui(), "Exception Handler", true);
 		exceptionHandlerDialog.setContentPane(buildDialogPanel());
 		exceptionHandlerDialog.setDefaultCloseOperation(
-			JDialog.DO_NOTHING_ON_CLOSE);
+				JDialog.DO_NOTHING_ON_CLOSE);
 		exceptionHandlerDialog.addWindowListener(
-			new WindowAdapter()
-		{
-			public void windowClosing(WindowEvent we)
-			{
-				closeDialog();
-			}
-		});
+				new WindowAdapter() {
+					public void windowClosing(WindowEvent we) {
+						closeDialog();
+					}
+				});
 		exceptionHandlerDialog.pack();
 		exceptionHandlerDialog.setLocationRelativeTo(Globals.getGui());
 		exceptionHandlerDialog.setVisible(true);
 	}
 
 	// The dialog box that appears when menu item is selected.
-	private JPanel buildDialogPanel()
-	{
+	private JPanel buildDialogPanel() {
 		JPanel contents = new JPanel(new BorderLayout(20, 20));
 		contents.setBorder(new EmptyBorder(10, 10, 10, 10));
 		// Top row - the check box for setting...
@@ -104,23 +69,19 @@ public class SettingsExceptionHandlerAction extends GuiAction
 		Box controlPanel = Box.createHorizontalBox();
 		JButton okButton = new JButton("OK");
 		okButton.addActionListener(
-			new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				performOK();
-				closeDialog();
-			}
-		});
+				new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						performOK();
+						closeDialog();
+					}
+				});
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.addActionListener(
-			new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				closeDialog();
-			}
-		});
+				new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						closeDialog();
+					}
+				});
 		controlPanel.add(Box.createHorizontalGlue());
 		controlPanel.add(okButton);
 		controlPanel.add(Box.createHorizontalGlue());
@@ -131,60 +92,50 @@ public class SettingsExceptionHandlerAction extends GuiAction
 	}
 
 	// User has clicked "OK" button, so record status of the checkbox and text field.
-	private void performOK()
-	{
+	private void performOK() {
 		boolean finalSelected = exceptionHandlerSetting.isSelected();
-		String  finalPathname = exceptionHandlerDisplay.getText();
+		String finalPathname = exceptionHandlerDisplay.getText();
 		// If nothing has changed then don't modify setting variables or properties file.
-		if(initialSelected != finalSelected
+		if (initialSelected != finalSelected
 				|| initialPathname == null && finalPathname != null
-				|| initialPathname != null && !initialPathname.equals(finalPathname))
-		{
+				|| initialPathname != null && !initialPathname.equals(finalPathname)) {
 			Globals.getSettings().setExceptionHandlerEnabled(finalSelected);
-			if(finalSelected)
+			if (finalSelected)
 				Globals.getSettings().setExceptionHandler(finalPathname);
 		}
 	}
 
 	// We're finished with this modal dialog.
-	private void closeDialog()
-	{
+	private void closeDialog() {
 		exceptionHandlerDialog.setVisible(false);
 		exceptionHandlerDialog.dispose();
 	}
 
-
 	/////////////////////////////////////////////////////////////////////////////////
 	// Associated action class: exception handler setting.  Attached to check box.
-	private class ExceptionHandlerSettingAction implements ActionListener
-	{
-		public void actionPerformed(ActionEvent e)
-		{
+	private class ExceptionHandlerSettingAction implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
 			boolean selected = ((JCheckBox) e.getSource()).isSelected();
 			exceptionHandlerSelectionButton.setEnabled(selected);
 			exceptionHandlerDisplay.setEnabled(selected);
 		}
 	}
 
-
 	/////////////////////////////////////////////////////////////////////////////////
 	// Associated action class: selecting exception handler file.  Attached to handler selector.
-	private class ExceptionHandlerSelectionAction implements ActionListener
-	{
-		public void actionPerformed(ActionEvent e)
-		{
+	private class ExceptionHandlerSelectionAction implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
 			JFileChooser chooser = new JFileChooser();
 			String pathname = Globals.getSettings().getExceptionHandler();
-			if(pathname != null)
-			{
+			if (pathname != null) {
 				File file = new File(pathname);
-				if(file.exists()) chooser.setSelectedFile(file);
+				if (file.exists())
+					chooser.setSelectedFile(file);
 			}
 
 			VenusUI.runOnDummyThread(() -> {
 				int result = chooser.showOpenDialog(Globals.getGui());
-				if(result == JFileChooser.APPROVE_OPTION)
-				{
+				if (result == JFileChooser.APPROVE_OPTION) {
 					// pathname = ;//.replaceAll("\\\\","/");
 					exceptionHandlerDisplay.setText(chooser.getSelectedFile().getPath());
 				}

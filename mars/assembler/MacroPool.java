@@ -1,35 +1,7 @@
 package mars.assembler;
 
 import java.util.ArrayList;
-import java.util.Stack;
-
-import mars.ErrorList;
 import mars.MIPSprogram;
-
-/*
-Copyright (c) 2013.
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject
-to the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-(MIT license, http://www.opensource.org/licenses/mit-license.html)
- */
 
 /**
  * Stores information of macros defined by now. <br>
@@ -44,10 +16,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * source code) and Nested macro definition (defining a macro inside other macro
  * definition) are not supported.
  *
- * @author M.H.Sekhavat <sekhavat17@gmail.com>
+ * @author CC
  */
-public class MacroPool
-{
+public class MacroPool {
 	private MIPSprogram program;
 	/**
 	 * List of macros defined by now
@@ -64,13 +35,11 @@ public class MacroPool
 	 */
 	private int counter;
 
-
 	/**
 	* Create an empty MacroPool for given program
 	* @param mipsProgram  associated MIPS program
 	*/
-	public MacroPool(MIPSprogram mipsProgram)
-	{
+	public MacroPool(MIPSprogram mipsProgram) {
 		this.program = mipsProgram;
 		macroList = new ArrayList<Macro>();
 		callStack = new ArrayList<Integer>();
@@ -90,8 +59,7 @@ public class MacroPool
 	 *            Token containing name of macro after <code>.macro</code> directive
 	 */
 
-	public void beginMacro(Token nameToken)
-	{
+	public void beginMacro(Token nameToken) {
 		current = new Macro();
 		current.setName(nameToken.getValue());
 		current.setFromLine(nameToken.getSourceLine());
@@ -108,8 +76,7 @@ public class MacroPool
 	 *            Token containing <code>.end_macro</code> directive in source code
 	 */
 
-	public void commitMacro(Token endToken)
-	{
+	public void commitMacro(Token endToken) {
 		current.setToLine(endToken.getSourceLine());
 		current.setOriginalToLine(endToken.getOriginalSourceLine());
 		current.readyForCommit();
@@ -125,17 +92,15 @@ public class MacroPool
 	 * @return {@link Macro} object matching the name and argument count of
 	 *         tokens passed
 	 */
-	public Macro getMatchingMacro(TokenList tokens, int callerLine)
-	{
-		if(tokens.size() < 1)
+	public Macro getMatchingMacro(TokenList tokens, int callerLine) {
+		if (tokens.size() < 1)
 			return null;
 		Macro ret = null;
 		Token firstToken = tokens.get(0);
-		for(Macro macro : macroList)
-		{
-			if(macro.getName().equals(firstToken.getValue())
+		for (Macro macro : macroList) {
+			if (macro.getName().equals(firstToken.getValue())
 					&& macro.getArgs().size() + 1 == tokens.size()
-					//&& macro.getToLine() < callerLine  // condition removed; doesn't work nicely in conjunction with .include, and does not seem necessary.  DPS 8-MAR-2013
+					//&& macro.getToLine() < callerLine  // condition removed; doesn't work nicely in conjunction with .include, and does not seem necessary.  8-MAR-2013
 					&& (ret == null || ret.getFromLine() < macro.getFromLine()))
 				ret = macro;
 		}
@@ -147,22 +112,18 @@ public class MacroPool
 	 * @return true if any macros have been defined with name <code>value</code>
 	 *         by now, not concerning arguments count.
 	 */
-	public boolean matchesAnyMacroName(String value)
-	{
-		for(Macro macro : macroList)
-			if(macro.getName().equals(value))
+	public boolean matchesAnyMacroName(String value) {
+		for (Macro macro : macroList)
+			if (macro.getName().equals(value))
 				return true;
 		return false;
 	}
 
-
-	public Macro getCurrent()
-	{
+	public Macro getCurrent() {
 		return current;
 	}
 
-	public void setCurrent(Macro current)
-	{
+	public void setCurrent(Macro current) {
 		this.current = current;
 	}
 
@@ -173,42 +134,34 @@ public class MacroPool
 	 *
 	 * @return counter value
 	 */
-	public int getNextCounter()
-	{
+	public int getNextCounter() {
 		return counter++;
 	}
 
-
-	public ArrayList<Integer> getCallStack()
-	{
+	public ArrayList<Integer> getCallStack() {
 		return callStack;
 	}
 
-
-	public boolean pushOnCallStack(Token token)   //returns true if detected expansion loop
+	public boolean pushOnCallStack(Token token) //returns true if detected expansion loop
 	{
 		int sourceLine = token.getSourceLine();
 		int origSourceLine = token.getOriginalSourceLine();
-		if(callStack.contains(sourceLine))
+		if (callStack.contains(sourceLine))
 			return true;
 		callStack.add(sourceLine);
 		callStackOrigLines.add(origSourceLine);
 		return false;
 	}
 
-	public void popFromCallStack()
-	{
+	public void popFromCallStack() {
 		callStack.remove(callStack.size() - 1);
 		callStackOrigLines.remove(callStackOrigLines.size() - 1);
 	}
 
-
-	public String getExpansionHistory()
-	{
+	public String getExpansionHistory() {
 		String ret = "";
-		for(int i = 0; i < callStackOrigLines.size(); i++)
-		{
-			if(i > 0)
+		for (int i = 0; i < callStackOrigLines.size(); i++) {
+			if (i > 0)
 				ret += "->";
 			ret += callStackOrigLines.get(i).toString();
 		}

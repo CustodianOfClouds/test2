@@ -1,29 +1,3 @@
-/*
-Copyright (c) 2008,  Felipe Lessa
-
-Developed by Felipe Lessa (felipe.lessa@gmail.com)
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject
-to the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-(MIT license, http://www.opensource.org/licenses/mit-license.html)
- */
 package mars.tools;
 
 import java.awt.GridBagConstraints;
@@ -52,14 +26,13 @@ import mars.mips.instructions.BasicInstructionFormat;
  *
  * Code slightly based on MemoryReferenceVisualization.
  *
- * @author Felipe Lessa <felipe.lessa@gmail.com>
+ * @author CC
  *
  */
-//@SuppressWarnings("serial")
-public class InstructionCounter extends AbstractMarsToolAndApplication
-{
-	private static String name    = "Instruction Counter";
-	private static String version = "Version 1.0 (Felipe Lessa)";
+@SuppressWarnings("deprecation")
+public class InstructionCounter extends AbstractMarsToolAndApplication {
+	private static String name = "Instruction Counter";
+	private static String version = "Version 1.0";
 	private static String heading = "Counting the number of instructions executed";
 
 	/**
@@ -89,7 +62,6 @@ public class InstructionCounter extends AbstractMarsToolAndApplication
 	private JTextField counterJField;
 	private JProgressBar progressbarJ;
 
-
 	/**
 	 * The last address we saw. We ignore it because the only way for a
 	 * program to execute twice the same instruction is to enter an infinite
@@ -102,28 +74,24 @@ public class InstructionCounter extends AbstractMarsToolAndApplication
 	 * @param title String containing title for title bar
 	 * @param heading String containing text for heading shown in upper part of window.
 	 */
-	public InstructionCounter(String title, String heading)
-	{
+	public InstructionCounter(String title, String heading) {
 		super(title, heading);
 	}
 
 	/**
 	 * Simple construction, likely used by the MARS Tools menu mechanism.
 	 */
-	public InstructionCounter()
-	{
+	public InstructionCounter() {
 		super(name + ", " + version, heading);
 	}
 
-//	@Override
-	public String getName()
-	{
+	//	@Override
+	public String getName() {
 		return name;
 	}
 
-//	@Override
-	protected JComponent buildMainDisplayArea()
-	{
+	//	@Override
+	protected JComponent buildMainDisplayArea() {
 		// Create everything
 		JPanel panel = new JPanel(new GridBagLayout());
 
@@ -201,61 +169,56 @@ public class InstructionCounter extends AbstractMarsToolAndApplication
 		return panel;
 	}
 
-//	@Override
-	protected void addAsObserver()
-	{
+	//	@Override
+	protected void addAsObserver() {
 		addAsObserver(Memory.textBaseAddress, Memory.textLimitAddress);
 	}
 
-//	@Override
-	protected void processMIPSUpdate(Observable resource, AccessNotice notice)
-	{
-		if(!notice.accessIsFromMIPS()) return;
-		if(notice.getAccessType() != AccessNotice.READ) return;
+	//	@Override
+	protected void processMIPSUpdate(Observable resource, AccessNotice notice) {
+		if (!notice.accessIsFromMIPS())
+			return;
+		if (notice.getAccessType() != AccessNotice.READ)
+			return;
 		MemoryAccessNotice m = (MemoryAccessNotice) notice;
 		int a = m.getAddress();
-		if(a == lastAddress) return;
+		if (a == lastAddress)
+			return;
 		lastAddress = a;
 		counter++;
-		try
-		{
+		try {
 			ProgramStatement stmt = Memory.getInstance().getStatement(a);
 			BasicInstruction instr = (BasicInstruction) stmt.getInstruction();
 			BasicInstructionFormat format = instr.getInstructionFormat();
-			if(format == BasicInstructionFormat.R_FORMAT)
+			if (format == BasicInstructionFormat.R_FORMAT)
 				counterR++;
-			else if(format == BasicInstructionFormat.I_FORMAT
+			else if (format == BasicInstructionFormat.I_FORMAT
 					|| format == BasicInstructionFormat.I_BRANCH_FORMAT)
 				counterI++;
-			else if(format == BasicInstructionFormat.J_FORMAT)
+			else if (format == BasicInstructionFormat.J_FORMAT)
 				counterJ++;
-		}
-		catch(AddressErrorException e)
-		{
+		} catch (AddressErrorException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		updateDisplay();
 	}
 
-//	@Override
-	protected void initializePreGUI()
-	{
+	//	@Override
+	protected void initializePreGUI() {
 		counter = counterR = counterI = counterJ = 0;
 		lastAddress = -1;
 	}
 
-// @Override
-	protected void reset()
-	{
+	// @Override
+	protected void reset() {
 		counter = counterR = counterI = counterJ = 0;
 		lastAddress = -1;
 		updateDisplay();
 	}
 
-//	@Override
-	protected void updateDisplay()
-	{
+	//	@Override
+	protected void updateDisplay() {
 		counterField.setText(String.valueOf(counter));
 
 		counterRField.setText(String.valueOf(counterR));
@@ -270,14 +233,11 @@ public class InstructionCounter extends AbstractMarsToolAndApplication
 		progressbarJ.setMaximum(counter);
 		progressbarJ.setValue(counterJ);
 
-		if(counter == 0)
-		{
+		if (counter == 0) {
 			progressbarR.setString("0%");
 			progressbarI.setString("0%");
 			progressbarJ.setString("0%");
-		}
-		else
-		{
+		} else {
 			progressbarR.setString((counterR * 100) / counter + "%");
 			progressbarI.setString((counterI * 100) / counter + "%");
 			progressbarJ.setString((counterJ * 100) / counter + "%");

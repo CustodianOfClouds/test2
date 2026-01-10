@@ -1,15 +1,6 @@
-/*
- * SyntaxDocument.java - Document that can be tokenized
- * Copyright (C) 1999 Slava Pestov
- *
- * You may use and modify this package for any purpose. Redistribution is
- * permitted, in both source and binary form, provided that this notice
- * remains intact in all source distributions of this package.
- */
-
 package mars.venus.editors.jeditsyntax;
 
-import  mars.venus.editors.jeditsyntax.tokenmarker.*;
+import mars.venus.editors.jeditsyntax.tokenmarker.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.undo.UndoableEdit;
@@ -18,18 +9,16 @@ import javax.swing.undo.UndoableEdit;
  * A document implementation that can be tokenized by the syntax highlighting
  * system.
  *
- * @author Slava Pestov
- * @version $Id: SyntaxDocument.java,v 1.14 1999/12/13 03:40:30 sp Exp $
+ * @author CC
+ * @version the big 26
  */
-public class SyntaxDocument extends PlainDocument
-{
+public class SyntaxDocument extends PlainDocument {
 	/**
 	 * Returns the token marker that is to be used to split lines
 	 * of this document up into tokens. May return null if this
 	 * document is not to be colorized.
 	 */
-	public TokenMarker getTokenMarker()
-	{
+	public TokenMarker getTokenMarker() {
 		return tokenMarker;
 	}
 
@@ -39,13 +28,12 @@ public class SyntaxDocument extends PlainDocument
 	 * this is not supported for this type of document.
 	 * @param tm The new token marker
 	 */
-	public void setTokenMarker(TokenMarker tm)
-	{
+	public void setTokenMarker(TokenMarker tm) {
 		tokenMarker = tm;
-		if(tm == null)
+		if (tm == null)
 			return;
 		tokenMarker.insertLines(0, getDefaultRootElement()
-								.getElementCount());
+				.getElementCount());
 		tokenizeLines();
 	}
 
@@ -54,8 +42,7 @@ public class SyntaxDocument extends PlainDocument
 	 * marker. This should be called after the document is first
 	 * loaded.
 	 */
-	public void tokenizeLines()
-	{
+	public void tokenizeLines() {
 		tokenizeLines(0, getDefaultRootElement().getElementCount());
 	}
 
@@ -66,9 +53,8 @@ public class SyntaxDocument extends PlainDocument
 	 * @param start The first line to parse
 	 * @param len The number of lines, after the first one to parse
 	 */
-	public void tokenizeLines(int start, int len)
-	{
-		if(tokenMarker == null || !tokenMarker.supportsMultilineTokens())
+	public void tokenizeLines(int start, int len) {
+		if (tokenMarker == null || !tokenMarker.supportsMultilineTokens())
 			return;
 
 		Segment lineSegment = new Segment();
@@ -76,19 +62,15 @@ public class SyntaxDocument extends PlainDocument
 
 		len += start;
 
-		try
-		{
-			for(int i = start; i < len; i++)
-			{
+		try {
+			for (int i = start; i < len; i++) {
 				Element lineElement = map.getElement(i);
 				int lineStart = lineElement.getStartOffset();
 				getText(lineStart, lineElement.getEndOffset()
 						- lineStart - 1, lineSegment);
 				tokenMarker.markTokens(lineSegment, i);
 			}
-		}
-		catch(BadLocationException bl)
-		{
+		} catch (BadLocationException bl) {
 			bl.printStackTrace();
 		}
 	}
@@ -99,7 +81,8 @@ public class SyntaxDocument extends PlainDocument
 	 * this class has no undo functionality so this method is
 	 * empty.
 	 */
-	public void beginCompoundEdit() {}
+	public void beginCompoundEdit() {
+	}
 
 	/**
 	 * Ends a compound edit that can be undone in one operation.
@@ -107,7 +90,8 @@ public class SyntaxDocument extends PlainDocument
 	 * this class has no undo functionality so this method is
 	 * empty.
 	 */
-	public void endCompoundEdit() {}
+	public void endCompoundEdit() {
+	}
 
 	/**
 	 * Adds an undoable edit to this document's undo list. The edit
@@ -116,7 +100,8 @@ public class SyntaxDocument extends PlainDocument
 	 *
 	 * @since jEdit 2.2pre1
 	 */
-	public void addUndoableEdit(UndoableEdit edit) {}
+	public void addUndoableEdit(UndoableEdit edit) {
+	}
 
 	// protected members
 	protected TokenMarker tokenMarker;
@@ -126,17 +111,14 @@ public class SyntaxDocument extends PlainDocument
 	 * state immediately so that any event listeners get a
 	 * consistent token marker.
 	 */
-	protected void fireInsertUpdate(DocumentEvent evt)
-	{
-		if(tokenMarker != null)
-		{
+	protected void fireInsertUpdate(DocumentEvent evt) {
+		if (tokenMarker != null) {
 			DocumentEvent.ElementChange ch = evt.getChange(
-												 getDefaultRootElement());
-			if(ch != null)
-			{
+					getDefaultRootElement());
+			if (ch != null) {
 				tokenMarker.insertLines(ch.getIndex() + 1,
-										ch.getChildrenAdded().length -
-										ch.getChildrenRemoved().length);
+						ch.getChildrenAdded().length -
+								ch.getChildrenRemoved().length);
 			}
 		}
 
@@ -148,17 +130,14 @@ public class SyntaxDocument extends PlainDocument
 	 * state immediately so that any event listeners get a
 	 * consistent token marker.
 	 */
-	protected void fireRemoveUpdate(DocumentEvent evt)
-	{
-		if(tokenMarker != null)
-		{
+	protected void fireRemoveUpdate(DocumentEvent evt) {
+		if (tokenMarker != null) {
 			DocumentEvent.ElementChange ch = evt.getChange(
-												 getDefaultRootElement());
-			if(ch != null)
-			{
+					getDefaultRootElement());
+			if (ch != null) {
 				tokenMarker.deleteLines(ch.getIndex() + 1,
-										ch.getChildrenRemoved().length -
-										ch.getChildrenAdded().length);
+						ch.getChildrenRemoved().length -
+								ch.getChildrenAdded().length);
 			}
 		}
 

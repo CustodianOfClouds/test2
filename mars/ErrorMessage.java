@@ -3,45 +3,17 @@ package mars;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.ArrayList;
-/*
-Copyright (c) 2003-2012,  Pete Sanderson and Kenneth Vollmar
-
-Developed by Pete Sanderson (psanderson@otterbein.edu)
-and Kenneth Vollmar (kenvollmar@missouristate.edu)
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject
-to the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-(MIT license, http://www.opensource.org/licenses/mit-license.html)
- */
 
 /**
  * Represents occurrance of an error detected during tokenizing, assembly or simulation.
- * @author Pete Sanderson
- * @version August 2003
+ * @author CC
+ * @version the big 26
  **/
 
-public class ErrorMessage
-{
+public class ErrorMessage {
 	private boolean isWarning; // allow for warnings too (added Nov 2006)
 	private String filename; // name of source file  (added Oct 2006)
-	private int line;     // line in source code where error detected
+	private int line; // line in source code where error detected
 	private int position; // position in source line where error detected
 	private String message;
 	private String macroExpansionHistory;
@@ -67,8 +39,7 @@ public class ErrorMessage
 	 **/
 	// Added filename October 2006
 	@Deprecated
-	public ErrorMessage(String filename, int line, int position, String message)
-	{
+	public ErrorMessage(String filename, int line, int position, String message) {
 		this(ERROR, filename, line, position, message, "");
 	}
 
@@ -85,8 +56,7 @@ public class ErrorMessage
 	// Added macroExpansionHistory Dec 2012
 
 	@Deprecated
-	public ErrorMessage(String filename, int line, int position, String message, String macroExpansionHistory)
-	{
+	public ErrorMessage(String filename, int line, int position, String message, String macroExpansionHistory) {
 		this(ERROR, filename, line, position, message, macroExpansionHistory);
 	}
 
@@ -102,8 +72,8 @@ public class ErrorMessage
 	 * @deprecated  Newer constructors replace the String filename parameter with a MIPSprogram parameter to provide more information.
 	 **/
 	@Deprecated
-	public ErrorMessage(boolean isWarning, String filename, int line, int position, String message, String macroExpansionHistory)
-	{
+	public ErrorMessage(boolean isWarning, String filename, int line, int position, String message,
+			String macroExpansionHistory) {
 		this.isWarning = isWarning;
 		this.filename = filename;
 		this.line = line;
@@ -111,7 +81,6 @@ public class ErrorMessage
 		this.message = message;
 		this.macroExpansionHistory = macroExpansionHistory;
 	}
-
 
 	/**
 	 * Constructor for ErrorMessage.  Assumes line number is calculated after any .include files expanded, and
@@ -123,11 +92,9 @@ public class ErrorMessage
 	 * @param message String containing appropriate error message.
 	 **/
 
-	public ErrorMessage(MIPSprogram sourceMIPSprogram, int line, int position, String message)
-	{
+	public ErrorMessage(MIPSprogram sourceMIPSprogram, int line, int position, String message) {
 		this(ERROR, sourceMIPSprogram, line, position, message);
 	}
-
 
 	/**
 	 * Constructor for ErrorMessage.  Assumes line number is calculated after any .include files expanded, and
@@ -140,23 +107,16 @@ public class ErrorMessage
 	 * @param message String containing appropriate error message.
 	 **/
 
-	public ErrorMessage(boolean isWarning, MIPSprogram sourceMIPSprogram, int line, int position, String message)
-	{
+	public ErrorMessage(boolean isWarning, MIPSprogram sourceMIPSprogram, int line, int position, String message) {
 		this.isWarning = isWarning;
-		if(sourceMIPSprogram == null)
-		{
+		if (sourceMIPSprogram == null) {
 			this.filename = "";
 			this.line = line;
-		}
-		else
-		{
-			if(sourceMIPSprogram.getSourceLineList() == null)
-			{
+		} else {
+			if (sourceMIPSprogram.getSourceLineList() == null) {
 				this.filename = sourceMIPSprogram.getFilename();
 				this.line = line;
-			}
-			else
-			{
+			} else {
 				mars.assembler.SourceLine sourceLine = sourceMIPSprogram.getSourceLineList().get(line - 1);
 				this.filename = sourceLine.getFilename();
 				this.line = sourceLine.getLineNumber();
@@ -174,8 +134,7 @@ public class ErrorMessage
 	 **/
 	// Added January 2013
 
-	public ErrorMessage(ProgramStatement statement, String message)
-	{
+	public ErrorMessage(ProgramStatement statement, String message) {
 		this.isWarning = ERROR;
 		this.filename = statement.getSourceFile();
 		this.position = 0;
@@ -193,41 +152,31 @@ public class ErrorMessage
 		// for runtime error occurring in macro expansion (expansion->definition), need
 		// to assign to the opposite variables.
 		ArrayList<Integer> defineLine = parseMacroHistory(statement.getSource());
-		if(defineLine.size() == 0)
-		{
+		if (defineLine.size() == 0) {
 			this.line = statement.getSourceLine();
 			this.macroExpansionHistory = "";
-		}
-		else
-		{
+		} else {
 			this.line = defineLine.get(0);
 			this.macroExpansionHistory = "" + statement.getSourceLine();
 		}
 	}
 
-	private ArrayList<Integer> parseMacroHistory(String string)
-	{
+	private ArrayList<Integer> parseMacroHistory(String string) {
 		Pattern pattern = Pattern.compile("<\\d+>");
 		Matcher matcher = pattern.matcher(string);
 		String verify = new String(string).trim();
 		ArrayList<Integer> macroHistory = new ArrayList<Integer>();
-		while(matcher.find())
-		{
+		while (matcher.find()) {
 			String match = matcher.group();
-			if(verify.indexOf(match) == 0)
-			{
-				try
-				{
+			if (verify.indexOf(match) == 0) {
+				try {
 					int line = Integer.parseInt(match.substring(1, match.length() - 1));
 					macroHistory.add(line);
-				}
-				catch(NumberFormatException e)
-				{
+				} catch (NumberFormatException e) {
 					break;
 				}
 				verify = verify.substring(match.length()).trim();
-			}
-			else
+			} else
 				break;
 		}
 		return macroHistory;
@@ -239,8 +188,7 @@ public class ErrorMessage
 	 */
 	// Added October 2006
 
-	public String getFilename()
-	{
+	public String getFilename() {
 		return filename;
 	}
 
@@ -249,8 +197,7 @@ public class ErrorMessage
 	 * @return Returns line number in source program where error occurred.
 	 */
 
-	public int getLine()
-	{
+	public int getLine() {
 		return line;
 	}
 
@@ -259,8 +206,7 @@ public class ErrorMessage
 	 * @return Returns position within line of source program where error occurred.
 	 */
 
-	public int getPosition()
-	{
+	public int getPosition() {
 		return position;
 	}
 
@@ -269,8 +215,7 @@ public class ErrorMessage
 	 * @return Returns String containing textual error message.
 	 */
 
-	public String getMessage()
-	{
+	public String getMessage() {
 		return message;
 	}
 
@@ -279,8 +224,7 @@ public class ErrorMessage
 	 * @return Returns true if this message reflects warning, false if error.
 	 */
 	// Method added 28 Nov 2006
-	public boolean isWarning()
-	{
+	public boolean isWarning() {
 		return this.isWarning;
 	}
 
@@ -290,19 +234,17 @@ public class ErrorMessage
 	 */
 	// Method added by Mohammad Sekavat Dec 2012
 
-	public String getMacroExpansionHistory()
-	{
-		if(macroExpansionHistory == null || macroExpansionHistory.length() == 0)
+	public String getMacroExpansionHistory() {
+		if (macroExpansionHistory == null || macroExpansionHistory.length() == 0)
 			return "";
 		return macroExpansionHistory + "->";
 	}
 
 	// Added by Mohammad Sekavat Dec 2012
-	private static String getExpansionHistory(MIPSprogram sourceMIPSprogram)
-	{
-		if(sourceMIPSprogram == null || sourceMIPSprogram.getLocalMacroPool() == null)
+	private static String getExpansionHistory(MIPSprogram sourceMIPSprogram) {
+		if (sourceMIPSprogram == null || sourceMIPSprogram.getLocalMacroPool() == null)
 			return "";
 		return sourceMIPSprogram.getLocalMacroPool().getExpansionHistory();
 	}
 
-}  // ErrorMessage
+} // ErrorMessage

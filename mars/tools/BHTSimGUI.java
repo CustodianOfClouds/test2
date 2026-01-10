@@ -1,31 +1,4 @@
-/*
-Copyright (c) 2009,  Ingo Kofler, ITEC, Klagenfurt University, Austria
-
-Developed by Ingo Kofler (ingo.kofler@itec.uni-klu.ac.at)
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject
-to the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-(MIT license, http://www.opensource.org/licenses/mit-license.html)
- */
-
-package mars.tools;//.bhtsim;
+package mars.tools;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -58,11 +31,10 @@ import javax.swing.table.DefaultTableCellRenderer;
  * <li>A log panel that summarizes the predictions in a textual form
  * </ul>
  *
- * @author ingo.kofler@itec.uni-klu.ac.at
+ * @author CC
  */
-//@SuppressWarnings("serial")
-public class BHTSimGUI extends JPanel
-{
+@SuppressWarnings("deprecation")
+public class BHTSimGUI extends JPanel {
 
 	/** text field presenting the most recent branch instruction */
 	private JTextField m_tfInstruction;
@@ -74,13 +46,13 @@ public class BHTSimGUI extends JPanel
 	private JTextField m_tfIndex;
 
 	/** combo box for selecting the number of BHT entries */
-	private JComboBox m_cbBHTentries;
+	private JComboBox<Integer> m_cbBHTentries;
 
 	/** combo box for selecting the history size */
-	private JComboBox m_cbBHThistory;
+	private JComboBox<Integer> m_cbBHThistory;
 
 	/** combo box for selecting the initial value */
-	private JComboBox m_cbBHTinitVal;
+	private JComboBox<String> m_cbBHTinitVal;
 
 	/** the table representing the BHT */
 	private JTable m_tabBHT;
@@ -103,14 +75,11 @@ public class BHTSimGUI extends JPanel
 	/** constant for the String representing "do not take the branch" */
 	public final static String BHT_DO_NOT_TAKE_BRANCH = "NOT TAKE";
 
-
-
 	/**
 	 * Creates the GUI components of the BHT Simulator
 	 * The GUI is a subclass of JPanel which is integrated in the GUI of the MARS tool
 	 */
-	public BHTSimGUI()
-	{
+	public BHTSimGUI() {
 		BorderLayout layout = new BorderLayout();
 		layout.setVgap(10);
 		layout.setHgap(10);
@@ -129,18 +98,15 @@ public class BHTSimGUI extends JPanel
 	 *
 	 * @return the JTable representing the BHT
 	 */
-	private JTable createAndInitTable()
-	{
+	private JTable createAndInitTable() {
 		// create the table
 		JTable theTable = new JTable();
 
 		// create a default renderer for double values (percentage)
-		DefaultTableCellRenderer doubleRenderer = new DefaultTableCellRenderer()
-		{
+		DefaultTableCellRenderer doubleRenderer = new DefaultTableCellRenderer() {
 			private DecimalFormat formatter = new DecimalFormat("##0.00");
 
-			public void setValue(Object value)
-			{
+			public void setValue(Object value) {
 				setText((value == null) ? "" : formatter.format(value));
 			}
 		};
@@ -161,14 +127,12 @@ public class BHTSimGUI extends JPanel
 
 	}
 
-
 	/**
 	 * Creates and initializes the panel holding the instruction, address and index text fields.
 	 *
 	 * @return the info panel
 	 */
-	private JPanel buildInfoPanel()
-	{
+	private JPanel buildInfoPanel() {
 		m_tfInstruction = new JTextField();
 		m_tfAddress = new JTextField();
 		m_tfIndex = new JTextField();
@@ -212,33 +176,31 @@ public class BHTSimGUI extends JPanel
 		return outerPanel;
 	}
 
-
 	/**
 	 * Creates and initializes the panel for the configuration of the tool
 	 * The panel contains two combo boxes for selecting the number of BHT entries and the history size.
 	 *
 	 * @return a panel for the configuration
 	 */
-	private JPanel buildConfigPanel()
-	{
+	private JPanel buildConfigPanel() {
 		JPanel panel = new JPanel();
 
-		Vector sizes = new Vector();
+		Vector<Integer> sizes = new Vector<Integer>();
 		sizes.add(new Integer(8));
 		sizes.add(new Integer(16));
 		sizes.add(new Integer(32));
 
-		Vector bits = new Vector();
+		Vector<Integer> bits = new Vector<Integer>();
 		bits.add(new Integer(1));
 		bits.add(new Integer(2));
 
-		Vector initVals = new Vector();
+		Vector<String> initVals = new Vector<String>();
 		initVals.add(BHTSimGUI.BHT_DO_NOT_TAKE_BRANCH);
 		initVals.add(BHTSimGUI.BHT_TAKE_BRANCH);
 
-		m_cbBHTentries = new JComboBox(sizes);
-		m_cbBHThistory = new JComboBox(bits);
-		m_cbBHTinitVal = new JComboBox(initVals);
+		m_cbBHTentries = new JComboBox<Integer>(sizes);
+		m_cbBHThistory = new JComboBox<Integer>(bits);
+		m_cbBHTinitVal = new JComboBox<String>(initVals);
 
 		panel.add(new JLabel("# of BHT entries"));
 		panel.add(m_cbBHTentries);
@@ -250,14 +212,12 @@ public class BHTSimGUI extends JPanel
 		return panel;
 	}
 
-
 	/**
 	 * Creates and initializes the panel containing the log text area.
 	 *
 	 * @return the panel for the logging output
 	 */
-	private JPanel buildLogPanel()
-	{
+	private JPanel buildLogPanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
 		m_taLog = new JTextArea();
@@ -270,36 +230,30 @@ public class BHTSimGUI extends JPanel
 		return panel;
 	}
 
-
 	/***
 	 * Returns the combo box for selecting the number of BHT entries.
 	 *
 	 * @return the reference to the combo box
 	 */
-	public JComboBox getCbBHTentries()
-	{
+	public JComboBox<Integer> getCbBHTentries() {
 		return m_cbBHTentries;
 	}
-
 
 	/***
 	 * Returns the combo box for selecting the size of the BHT history.
 	 *
 	 * @return the reference to the combo box
 	 */
-	public JComboBox getCbBHThistory()
-	{
+	public JComboBox<Integer> getCbBHThistory() {
 		return m_cbBHThistory;
 	}
-
 
 	/***
 	 * Returns the combo box for selecting the initial value of the BHT
 	 *
 	 * @return the reference to the combo box
 	 */
-	public JComboBox getCbBHTinitVal()
-	{
+	public JComboBox<String> getCbBHTinitVal() {
 		return m_cbBHTinitVal;
 	}
 
@@ -308,54 +262,44 @@ public class BHTSimGUI extends JPanel
 	 *
 	 * @return the reference to the table
 	 */
-	public JTable getTabBHT()
-	{
+	public JTable getTabBHT() {
 		return m_tabBHT;
 	}
-
 
 	/***
 	 * Returns the text area for log purposes.
 	 *
 	 * @return the reference to the text area
 	 */
-	public JTextArea getTaLog()
-	{
+	public JTextArea getTaLog() {
 		return m_taLog;
 	}
-
 
 	/***
 	 * Returns the text field for displaying the most recent branch instruction
 	 *
 	 * @return the reference to the text field
 	 */
-	public JTextField getTfInstruction()
-	{
+	public JTextField getTfInstruction() {
 		return m_tfInstruction;
 	}
-
 
 	/***
 	 * Returns the text field for displaying the address of the most recent branch instruction
 	 *
 	 * @return the reference to the text field
 	 */
-	public JTextField getTfAddress()
-	{
+	public JTextField getTfAddress() {
 		return m_tfAddress;
 	}
-
 
 	/***
 	 * Returns the text field for displaying the corresponding index into the BHT
 	 *
 	 * @return the reference to the text field
 	 */
-	public JTextField getTfIndex()
-	{
+	public JTextField getTfIndex() {
 		return m_tfIndex;
 	}
-
 
 }

@@ -7,3 +7,4 @@ astyle*
 *.jar
 build/*
 *.asm
+.vscode/*

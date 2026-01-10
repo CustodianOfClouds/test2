@@ -1,46 +1,34 @@
 package mars.simulator;
-import javax.swing.SwingUtilities;
 
-/*-----------------------------------------------------
- * This file downloaded from the Sun Microsystems URL given below.
- *
- * I will subclass it to create worker thread for running
- * MIPS simulated execution.
- */
+import javax.swing.SwingUtilities;
 
 /**
  * This is the 3rd version of SwingWorker (also known as
  * SwingWorker 3), an abstract class that you subclass to
- * perform GUI-related work in a dedicated thread.  For
- * instructions on and examples of using this class, see:
- *
- * http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html
- *
- * Note that the API changed slightly in the 3rd version:
+ * perform GUI-related work in a dedicated thread.  
+ * 
  * You must now invoke start() on the SwingWorker after
  * creating it.
  */
-public abstract class SwingWorker
-{
-	private Object value;  // see getValue(), setValue()
+public abstract class SwingWorker {
+	private Object value; // see getValue(), setValue()
 
 	/**
 	 * Class to maintain reference to current worker thread
 	 * under separate synchronization control.
 	 */
-	private static class ThreadVar
-	{
+	private static class ThreadVar {
 		private Thread thread;
-		ThreadVar(Thread t)
-		{
+
+		ThreadVar(Thread t) {
 			thread = t;
 		}
-		synchronized Thread get()
-		{
+
+		synchronized Thread get() {
 			return thread;
 		}
-		synchronized void clear()
-		{
+
+		synchronized void clear() {
 			thread = null;
 		}
 	}
@@ -51,16 +39,14 @@ public abstract class SwingWorker
 	 * Get the value produced by the worker thread, or null if it
 	 * hasn't been constructed yet.
 	 */
-	protected synchronized Object getValue()
-	{
+	protected synchronized Object getValue() {
 		return value;
 	}
 
 	/**
 	 * Set the value produced by worker thread
 	 */
-	private synchronized void setValue(Object x)
-	{
+	private synchronized void setValue(Object x) {
 		value = x;
 	}
 
@@ -73,18 +59,16 @@ public abstract class SwingWorker
 	 * Called on the event dispatching thread (not on the worker thread)
 	 * after the <code>construct</code> method has returned.
 	 */
-	public void finished()
-	{
+	public void finished() {
 	}
 
 	/**
 	 * A new method that interrupts the worker thread.  Call this method
 	 * to force the worker to stop what it's doing.
 	 */
-	public void interrupt()
-	{
+	public void interrupt() {
 		Thread t = threadVar.get();
-		if(t != null)
+		if (t != null)
 			t.interrupt();
 		threadVar.clear();
 	}
@@ -96,56 +80,44 @@ public abstract class SwingWorker
 	 *
 	 * @return the value created by the <code>construct</code> method
 	 */
-	public Object get()
-	{
-		while(true)
-		{
+	public Object get() {
+		while (true) {
 			Thread t = threadVar.get();
-			if(t == null)
+			if (t == null)
 				return getValue();
-			try
-			{
+			try {
 				t.join();
-			}
-			catch(InterruptedException e)
-			{
+			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt(); // propagate
 				return null;
 			}
 		}
 	}
 
-
 	/**
 	 * Start a thread that will call the <code>construct</code> method
 	 * and then exit.
 	  * @param useSwing Set true if MARS is running from GUI, false otherwise.
 	 */
-	public SwingWorker(final boolean useSwing)
-	{
-		final Runnable doFinished = new Runnable()
-		{
-			public void run()
-			{
+	public SwingWorker(final boolean useSwing) {
+		final Runnable doFinished = new Runnable() {
+			public void run() {
 				finished();
 			}
 		};
 
-		Runnable doConstruct = new Runnable()
-		{
-			public void run()
-			{
-				try
-				{
+		Runnable doConstruct = new Runnable() {
+			public void run() {
+				try {
 					setValue(construct());
-				}
-				finally
-				{
+				} finally {
 					threadVar.clear();
 				}
 
-				if(useSwing) SwingUtilities.invokeLater(doFinished);
-				else doFinished.run();
+				if (useSwing)
+					SwingUtilities.invokeLater(doFinished);
+				else
+					doFinished.run();
 			}
 		};
 
@@ -160,10 +132,9 @@ public abstract class SwingWorker
 	/**
 	 * Start the worker thread.
 	 */
-	public void start()
-	{
+	public void start() {
 		Thread t = threadVar.get();
-		if(t != null)
+		if (t != null)
 			t.start();
 	}
 }

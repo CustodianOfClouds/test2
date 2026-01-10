@@ -1,53 +1,22 @@
 package mars.venus;
+
 import mars.mips.hardware.*;
 import mars.util.*;
 import mars.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.*;
-import java.awt.event.*;
-import javax.swing.undo.*;
-import java.text.*;
 import java.util.*;
 import java.io.*;
 import java.beans.PropertyChangeListener;
 import javax.swing.filechooser.FileFilter;
 
-/*
-Copyright (c) 2003-2010,  Pete Sanderson and Kenneth Vollmar
-
-Developed by Pete Sanderson (psanderson@otterbein.edu)
-and Kenneth Vollmar (kenvollmar@missouristate.edu)
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject
-to the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-(MIT license, http://www.opensource.org/licenses/mit-license.html)
-*/
-
 /**
   *  Tabbed pane for the editor.  Each of its tabs represents an open file.
-  *   @author Sanderson
+  *   @author CC
   **/
-
-public class EditTabbedPane extends JTabbedPane
-{
+@SuppressWarnings("deprecation")
+public class EditTabbedPane extends JTabbedPane {
 	EditPane editTab;
 	MainPane mainPane;
 
@@ -59,8 +28,7 @@ public class EditTabbedPane extends JTabbedPane
 	  *  Constructor for the EditTabbedPane class.
 	**/
 
-	public EditTabbedPane(VenusUI appFrame, Editor editor, MainPane mainPane)
-	{
+	public EditTabbedPane(VenusUI appFrame, Editor editor, MainPane mainPane) {
 		super();
 		this.mainUI = appFrame;
 		this.editor = editor;
@@ -68,26 +36,22 @@ public class EditTabbedPane extends JTabbedPane
 		this.mainPane = mainPane;
 		this.editor.setEditTabbedPane(this);
 		this.addChangeListener(
-			new ChangeListener()
-		{
-			public void stateChanged(ChangeEvent e)
-			{
-				EditPane editPane = (EditPane) getSelectedComponent();
-				if(editPane != null)
-				{
-					// New IF statement to permit free traversal of edit panes w/o invalidating
-					// assembly if assemble-all is selected.  DPS 9-Aug-2011
-					if(Globals.getSettings().getBooleanSetting(mars.Settings.ASSEMBLE_ALL_ENABLED))
-						EditTabbedPane.this.updateTitles(editPane);
-					else
-					{
-						EditTabbedPane.this.updateTitlesAndMenuState(editPane);
-						EditTabbedPane.this.mainPane.getExecutePane().clearPane();
+				new ChangeListener() {
+					public void stateChanged(ChangeEvent e) {
+						EditPane editPane = (EditPane) getSelectedComponent();
+						if (editPane != null) {
+							// New IF statement to permit free traversal of edit panes w/o invalidating
+							// assembly if assemble-all is selected.  9-Aug-2011
+							if (Globals.getSettings().getBooleanSetting(mars.Settings.ASSEMBLE_ALL_ENABLED))
+								EditTabbedPane.this.updateTitles(editPane);
+							else {
+								EditTabbedPane.this.updateTitlesAndMenuState(editPane);
+								EditTabbedPane.this.mainPane.getExecutePane().clearPane();
+							}
+							editPane.tellEditingComponentToRequestFocusInWindow();
+						}
 					}
-					editPane.tellEditingComponentToRequestFocusInWindow();
-				}
-			}
-		});
+				});
 	}
 
 	/**
@@ -96,9 +60,8 @@ public class EditTabbedPane extends JTabbedPane
 	 *
 	 * @return the current editor pane
 	 */
-	public EditPane getCurrentEditTab()
-	{
-		return (EditPane)this.getSelectedComponent();
+	public EditPane getCurrentEditTab() {
+		return (EditPane) this.getSelectedComponent();
 	}
 
 	/**
@@ -106,8 +69,7 @@ public class EditTabbedPane extends JTabbedPane
 	*
 	* @param editPane The EditPane tab to become current.
 	*/
-	public void setCurrentEditTab(EditPane editPane)
-	{
+	public void setCurrentEditTab(EditPane editPane) {
 		this.setSelectedComponent(editPane);
 	}
 
@@ -119,18 +81,16 @@ public class EditTabbedPane extends JTabbedPane
 	*  @param file File object for the desired file.
 	*  @return EditPane for the specified file, or null if file is unable to be opened in an EditPane
 	*/
-	public EditPane getCurrentEditTabForFile(File file)
-	{
+	public EditPane getCurrentEditTabForFile(File file) {
 		EditPane result = null;
 		EditPane tab = getEditPaneForFile(file.getPath());
-		if(tab != null)
-		{
-			if(tab != getCurrentEditTab())
+		if (tab != null) {
+			if (tab != getCurrentEditTab())
 				setCurrentEditTab(tab);
 			return tab;
 		}
 		// If no return yet, then file is not open.  Try to open it.
-		if(openFile(file))
+		if (openFile(file))
 			result = getCurrentEditTab();
 		return result;
 	}
@@ -139,8 +99,7 @@ public class EditTabbedPane extends JTabbedPane
 	 *  Carries out all necessary operations to implement
 	 *  the New operation from the File menu.
 	 */
-	public void newFile()
-	{
+	public void newFile() {
 		EditPane editPane = new EditPane(this.mainUI);
 		editPane.setSourceCode("", true);
 		editPane.setShowLineNumbersEnabled(true);
@@ -154,7 +113,7 @@ public class EditTabbedPane extends JTabbedPane
 		FileStatus.set(FileStatus.NEW_NOT_EDITED);
 
 		RegisterFile.resetRegisters();
-		mainUI.setReset(true);
+		VenusUI.setReset(true);
 		mainPane.getExecutePane().clearPane();
 		mainPane.setSelectedComponent(this);
 		editPane.displayCaretPosition(new Point(1, 1));
@@ -163,15 +122,13 @@ public class EditTabbedPane extends JTabbedPane
 		editPane.tellEditingComponentToRequestFocusInWindow();
 	}
 
-
 	/**
 	 *  Carries out all necessary operations to implement
 	 *  the Open operation from the File menu.  This
 	 *  begins with an Open File dialog.
 	 *  @return true if file was opened, false otherwise.
 	 */
-	public boolean openFile()
-	{
+	public boolean openFile() {
 		return fileOpener.openFile();
 	}
 
@@ -180,11 +137,9 @@ public class EditTabbedPane extends JTabbedPane
 	 * specified file in the editor.
 	 *  @return true if file was opened, false otherwise.
 	 */
-	public boolean openFile(File file)
-	{
+	public boolean openFile(File file) {
 		return fileOpener.openFile(file);
 	}
-
 
 	/**
 	 *  Carries out all necessary operations to implement
@@ -193,18 +148,14 @@ public class EditTabbedPane extends JTabbedPane
 	 *  and user selects Cancel from the warning dialog.
 	 *  @return true if file was closed, false otherwise.
 	 */
-	public boolean closeCurrentFile()
-	{
+	public boolean closeCurrentFile() {
 		EditPane editPane = getCurrentEditTab();
-		if(editPane != null)
-		{
-			if(editsSavedOrAbandoned())
-			{
+		if (editPane != null) {
+			if (editsSavedOrAbandoned()) {
 				this.remove(editPane);
 				mainPane.getExecutePane().clearPane();
 				mainPane.setSelectedComponent(this);
-			}
-			else
+			} else
 				return false;
 		}
 		return true;
@@ -215,56 +166,46 @@ public class EditTabbedPane extends JTabbedPane
 	 *  the Close All operation from the File menu.
 	 *  @return true if files closed, false otherwise.
 	 */
-	public boolean closeAllFiles()
-	{
+	public boolean closeAllFiles() {
 		boolean result = true;
 		boolean unsavedChanges = false;
 		int tabCount = getTabCount();
-		if(tabCount > 0)
-		{
+		if (tabCount > 0) {
 			mainPane.getExecutePane().clearPane();
 			mainPane.setSelectedComponent(this);
 			EditPane[] tabs = new EditPane[tabCount];
-			for(int i = 0; i < tabCount; i++)
-			{
-				tabs[i] = (EditPane)getComponentAt(i);
-				if(tabs[i].hasUnsavedEdits())
+			for (int i = 0; i < tabCount; i++) {
+				tabs[i] = (EditPane) getComponentAt(i);
+				if (tabs[i].hasUnsavedEdits())
 					unsavedChanges = true;
 			}
-			if(unsavedChanges)
-			{
-				switch(confirm("one or more files"))
-				{
-					case JOptionPane.YES_OPTION :
+			if (unsavedChanges) {
+				switch (confirm("one or more files")) {
+					case JOptionPane.YES_OPTION:
 						boolean removedAll = true;
-						for(int i = 0; i < tabCount; i++)
-						{
-							if(tabs[i].hasUnsavedEdits())
-							{
+						for (int i = 0; i < tabCount; i++) {
+							if (tabs[i].hasUnsavedEdits()) {
 								setSelectedComponent(tabs[i]);
 								boolean saved = saveCurrentFile();
-								if(saved)
+								if (saved)
 									this.remove(tabs[i]);
 								else
 									removedAll = false;
-							}
-							else
+							} else
 								this.remove(tabs[i]);
 						}
 						return removedAll;
-					case JOptionPane.NO_OPTION :
-						for(int i = 0; i < tabCount; i++)
+					case JOptionPane.NO_OPTION:
+						for (int i = 0; i < tabCount; i++)
 							this.remove(tabs[i]);
 						return true;
-					case JOptionPane.CANCEL_OPTION :
+					case JOptionPane.CANCEL_OPTION:
 						return false;
-					default : // should never occur
+					default: // should never occur
 						return false;
 				}
-			}
-			else
-			{
-				for(int i = 0; i < tabCount; i++)
+			} else {
+				for (int i = 0; i < tabCount; i++)
 					this.remove(tabs[i]);
 			}
 		}
@@ -275,11 +216,9 @@ public class EditTabbedPane extends JTabbedPane
 	 * Saves file under existing name.  If no name, will invoke Save As.
 	 * @return true if the file was actually saved.
 	 */
-	public boolean saveCurrentFile()
-	{
+	public boolean saveCurrentFile() {
 		EditPane editPane = getCurrentEditTab();
-		if(saveFile(editPane))
-		{
+		if (saveFile(editPane)) {
 			FileStatus.setSaved(true);
 			FileStatus.setEdited(false);
 			FileStatus.set(FileStatus.NOT_EDITED);
@@ -292,29 +231,23 @@ public class EditTabbedPane extends JTabbedPane
 
 	// Save file associatd with specified edit pane.
 	// Returns true if save operation worked, else false.
-	private boolean saveFile(EditPane editPane)
-	{
-		if(editPane != null)
-		{
-			if(editPane.isNew())
-			{
+	private boolean saveFile(EditPane editPane) {
+		if (editPane != null) {
+			if (editPane.isNew()) {
 				File theFile = saveAsFile(editPane);
-				if(theFile != null)
+				if (theFile != null)
 					editPane.setPathname(theFile.getPath());
 				return (theFile != null);
 			}
 			File theFile = new File(editPane.getPathname());
-			try
-			{
+			try {
 				BufferedWriter outFileStream = new BufferedWriter(new FileWriter(theFile));
 				outFileStream.write(editPane.getSource(), 0, editPane.getSource().length());
 				outFileStream.close();
 				Globals.getSettings().updateRecentFile(theFile);
-			}
-			catch(java.io.IOException c)
-			{
+			} catch (java.io.IOException c) {
 				JOptionPane.showMessageDialog(null, "Save operation could not be completed due to an error:\n" + c,
-											  "Save Operation Failed", JOptionPane.ERROR_MESSAGE);
+						"Save Operation Failed", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
 			return true;
@@ -322,19 +255,15 @@ public class EditTabbedPane extends JTabbedPane
 		return false;
 	}
 
-
-
 	/**
 	 * Pops up a dialog box to do "Save As" operation.  If necessary
 	 * an additional overwrite dialog is performed.
 	 * @return true if the file was actually saved.
 	 */
-	public boolean saveAsCurrentFile()
-	{
+	public boolean saveAsCurrentFile() {
 		EditPane editPane = getCurrentEditTab();
 		File theFile = saveAsFile(editPane);
-		if(theFile != null)
-		{
+		if (theFile != null) {
 			FileStatus.setFile(theFile);
 			FileStatus.setName(theFile.getPath());
 			FileStatus.setSaved(true);
@@ -351,114 +280,93 @@ public class EditTabbedPane extends JTabbedPane
 
 	// perform Save As for selected edit pane.  If the save is performed,
 	// return its File object.  Otherwise return null.
-	private File saveAsFile(EditPane editPane)
-	{
+	private File saveAsFile(EditPane editPane) {
 		File theFile = null;
-		if(editPane != null)
-		{
+		if (editPane != null) {
 			JFileChooser saveDialog = null;
 			boolean operationOK = false;
-			while(!operationOK)
-			{
+			while (!operationOK) {
 				// Set Save As dialog directory in a logical way.  If file in
 				// edit pane had been previously saved, default to its directory.
 				// If a new file (mipsN.asm), default to current save directory.
-				// DPS 13-July-2011
-				if(editPane.isNew())
+				// 13-July-2011
+				if (editPane.isNew())
 					saveDialog = new JFileChooser(editor.getCurrentSaveDirectory());
-				else
-				{
+				else {
 					File f = new File(editPane.getPathname());
-					if(f != null)
-						saveDialog = new JFileChooser(f.getParent());
-					else
-						saveDialog = new JFileChooser(editor.getCurrentSaveDirectory());
+					saveDialog = new JFileChooser(f.getParent());
 				}
 				String paneFile = editPane.getFilename();
-				if(paneFile != null) saveDialog.setSelectedFile(new File(paneFile));
+				if (paneFile != null)
+					saveDialog.setSelectedFile(new File(paneFile));
 				// end of 13-July-2011 code.
 				saveDialog.setDialogTitle("Save As");
 
 				int decision = saveDialog.showSaveDialog(mainUI);
-				if(decision != JFileChooser.APPROVE_OPTION)
+				if (decision != JFileChooser.APPROVE_OPTION)
 					return null;
 				theFile = saveDialog.getSelectedFile();
 				operationOK = true;
-				if(theFile.exists())
-				{
+				if (theFile.exists()) {
 					int overwrite = JOptionPane.showConfirmDialog(mainUI,
-									"File " + theFile.getName() + " already exists.  Do you wish to overwrite it?",
-									"Overwrite existing file?",
-									JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-					switch(overwrite)
-					{
-						case JOptionPane.YES_OPTION :
+							"File " + theFile.getName() + " already exists.  Do you wish to overwrite it?",
+							"Overwrite existing file?",
+							JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+					switch (overwrite) {
+						case JOptionPane.YES_OPTION:
 							operationOK = true;
 							break;
-						case JOptionPane.NO_OPTION :
+						case JOptionPane.NO_OPTION:
 							operationOK = false;
 							break;
-						case JOptionPane.CANCEL_OPTION :
+						case JOptionPane.CANCEL_OPTION:
 							return null;
-						default : // should never occur
+						default: // should never occur
 							return null;
 					}
 				}
 			}
 			// Either file with selected name does not exist or user wants to
 			// overwrite it, so go for it!
-			try
-			{
+			try {
 				BufferedWriter outFileStream = new BufferedWriter(new FileWriter(theFile));
 				outFileStream.write(editPane.getSource(), 0, editPane.getSource().length());
 				outFileStream.close();
-			}
-			catch(java.io.IOException c)
-			{
+			} catch (java.io.IOException c) {
 				JOptionPane.showMessageDialog(null, "Save As operation could not be completed due to an error:\n" + c,
-											  "Save As Operation Failed", JOptionPane.ERROR_MESSAGE);
+						"Save As Operation Failed", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
 		}
 		return theFile;
 	}
 
-
-
-
 	/**
 	 * Saves all files currently open in the editor.
 	 *
 	 * @return true if operation succeeded otherwise false.
 	 */
-	public boolean saveAllFiles()
-	{
+	public boolean saveAllFiles() {
 		boolean result = false;
 		int tabCount = getTabCount();
-		if(tabCount > 0)
-		{
+		if (tabCount > 0) {
 
 			result = true;
 			EditPane[] tabs = new EditPane[tabCount];
 			EditPane savedPane = getCurrentEditTab();
-			for(int i = 0; i < tabCount; i++)
-			{
-				tabs[i] = (EditPane)getComponentAt(i);
-				if(tabs[i].hasUnsavedEdits())
-				{
+			for (int i = 0; i < tabCount; i++) {
+				tabs[i] = (EditPane) getComponentAt(i);
+				if (tabs[i].hasUnsavedEdits()) {
 					setCurrentEditTab(tabs[i]);
-					if(saveFile(tabs[i]))
-					{
+					if (saveFile(tabs[i])) {
 						tabs[i].setFileStatus(FileStatus.NOT_EDITED);
 						editor.setTitle(tabs[i].getPathname(), tabs[i].getFilename(), tabs[i].getFileStatus());
-					}
-					else
+					} else
 						result = false;
 				}
 			}
 			setCurrentEditTab(savedPane);
-			if(result)
-			{
+			if (result) {
 				EditPane editPane = getCurrentEditTab();
 				FileStatus.setSaved(true);
 				FileStatus.setEdited(false);
@@ -470,36 +378,29 @@ public class EditTabbedPane extends JTabbedPane
 		return result;
 	}
 
-
-
 	/**
 	 * Remove the pane and update menu status
 	 */
-	public void remove(EditPane editPane)
-	{
+	public void remove(EditPane editPane) {
 		super.remove(editPane);
 		editPane = getCurrentEditTab(); // is now next tab or null
-		if(editPane == null)
-		{
+		if (editPane == null) {
 			FileStatus.set(FileStatus.NO_FILE);
 			this.editor.setTitle("", "", FileStatus.NO_FILE);
 			Globals.getGui().setMenuState(FileStatus.NO_FILE);
-		}
-		else
-		{
+		} else {
 			FileStatus.set(editPane.getFileStatus());
 			updateTitlesAndMenuState(editPane);
 		}
 		// When last file is closed, menu is unable to respond to mnemonics
 		// and accelerators.  Let's have it request focus so it may do so.
-		if(getTabCount() == 0) mainUI.haveMenuRequestFocus();
+		if (getTabCount() == 0)
+			mainUI.haveMenuRequestFocus();
 	}
-
 
 	// Handy little utility to update the title on the current tab and the frame title bar
 	// and also to update the MARS menu state (controls which actions are enabled).
-	private void updateTitlesAndMenuState(EditPane editPane)
-	{
+	private void updateTitlesAndMenuState(EditPane editPane) {
 		editor.setTitle(editPane.getPathname(), editPane.getFilename(), editPane.getFileStatus());
 		editPane.updateStaticFileStatus(); //  for legacy code that depends on the static FileStatus (pre 4.0)
 		Globals.getGui().setMenuState(editPane.getFileStatus());
@@ -507,9 +408,8 @@ public class EditTabbedPane extends JTabbedPane
 
 	// Handy little utility to update the title on the current tab and the frame title bar
 	// and also to update the MARS menu state (controls which actions are enabled).
-	// DPS 9-Aug-2011
-	private void updateTitles(EditPane editPane)
-	{
+	// 9-Aug-2011
+	private void updateTitles(EditPane editPane) {
 		editor.setTitle(editPane.getPathname(), editPane.getFilename(), editPane.getFileStatus());
 		boolean assembled = FileStatus.isAssembled();
 		editPane.updateStaticFileStatus(); //  for legacy code that depends on the static FileStatus (pre 4.0)
@@ -522,14 +422,11 @@ public class EditTabbedPane extends JTabbedPane
 	* @param pathname Pathname for desired file
 	* @return the EditPane for this file if it is open in the editor, or null if not.
 	*/
-	public EditPane getEditPaneForFile(String pathname)
-	{
+	public EditPane getEditPaneForFile(String pathname) {
 		EditPane openPane = null;
-		for(int i = 0; i < getTabCount(); i++)
-		{
+		for (int i = 0; i < getTabCount(); i++) {
 			EditPane pane = (EditPane) getComponentAt(i);
-			if(pane.getPathname().equals(pathname))
-			{
+			if (pane.getPathname().equals(pathname)) {
 				openPane = pane;
 				break;
 			}
@@ -542,49 +439,39 @@ public class EditTabbedPane extends JTabbedPane
 	 *  @return true if no unsaved edits or if user chooses to save them or not; false
 	 *  if there are unsaved edits and user cancels the operation.
 	 */
-	public boolean editsSavedOrAbandoned()
-	{
+	public boolean editsSavedOrAbandoned() {
 		EditPane currentPane = getCurrentEditTab();
-		if(currentPane != null && currentPane.hasUnsavedEdits())
-		{
-			switch(confirm(currentPane.getFilename()))
-			{
-				case JOptionPane.YES_OPTION :
+		if (currentPane != null && currentPane.hasUnsavedEdits()) {
+			switch (confirm(currentPane.getFilename())) {
+				case JOptionPane.YES_OPTION:
 					return saveCurrentFile();
-				case JOptionPane.NO_OPTION :
+				case JOptionPane.NO_OPTION:
 					return true;
-				case JOptionPane.CANCEL_OPTION :
+				case JOptionPane.CANCEL_OPTION:
 					return false;
-				default : // should never occur
+				default: // should never occur
 					return false;
 			}
-		}
-		else
+		} else
 			return true;
 	}
 
-
-	private int confirm(String name)
-	{
+	private int confirm(String name) {
 		return JOptionPane.showConfirmDialog(mainUI,
-											 "Changes to " + name + " will be lost unless you save.  Do you wish to save all changes now?",
-											 "Save program changes?",
-											 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+				"Changes to " + name + " will be lost unless you save.  Do you wish to save all changes now?",
+				"Save program changes?",
+				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 	}
 
-
-
-	private class FileOpener
-	{
+	private class FileOpener {
 		private File mostRecentlyOpenedFile;
 		private JFileChooser fileChooser;
 		private int fileFilterCount;
-		private ArrayList fileFilterList;
+		private ArrayList<FileFilter> fileFilterList;
 		private PropertyChangeListener listenForUserAddedFileFilter;
 		private Editor theEditor;
 
-		public FileOpener(Editor theEditor)
-		{
+		public FileOpener(Editor theEditor) {
 			this.mostRecentlyOpenedFile = null;
 			this.theEditor = theEditor;
 			this.fileChooser = new JFileChooser();
@@ -592,7 +479,7 @@ public class EditTabbedPane extends JTabbedPane
 			this.fileChooser.addPropertyChangeListener(this.listenForUserAddedFileFilter);
 
 			// Note: add sequence is significant - last one added becomes default.
-			fileFilterList = new ArrayList();
+			fileFilterList = new ArrayList<FileFilter>();
 			fileFilterList.add(fileChooser.getAcceptAllFileFilter());
 			fileFilterList.add(FilenameFinder.getFileFilter(Globals.fileExtensions, "Assembler Files", true));
 			fileFilterCount = 0; // this will trigger fileChooser file filter load in next line
@@ -602,8 +489,7 @@ public class EditTabbedPane extends JTabbedPane
 		/*
 		 * Launch a file chooser for name of file to open.  Return true if file opened, false otherwise
 		 */
-		private boolean openFile()
-		{
+		private boolean openFile() {
 			// The fileChooser's list may be rebuilt from the master ArrayList if a new filter
 			// has been added by the user.
 			setChoosableFileFilters();
@@ -612,20 +498,19 @@ public class EditTabbedPane extends JTabbedPane
 			// Set default to previous file opened, if any.  This is useful in conjunction
 			// with option to assemble file automatically upon opening.  File likely to have
 			// been edited externally (e.g. by Mipster).
-			if(Globals.getSettings().getAssembleOnOpenEnabled() && mostRecentlyOpenedFile != null)
+			if (Globals.getSettings().getAssembleOnOpenEnabled() && mostRecentlyOpenedFile != null)
 				fileChooser.setSelectedFile(mostRecentlyOpenedFile);
 
-			if(fileChooser.showOpenDialog(mainUI) == JFileChooser.APPROVE_OPTION)
-			{
+			if (fileChooser.showOpenDialog(mainUI) == JFileChooser.APPROVE_OPTION) {
 				File theFile = fileChooser.getSelectedFile();
 				theEditor.setCurrentOpenDirectory(theFile.getParent());
-				//theEditor.setCurrentSaveDirectory(theFile.getParent());// 13-July-2011 DPS.
-				if(!openFile(theFile))
+				//theEditor.setCurrentSaveDirectory(theFile.getParent());// 13-July-2011.
+				if (!openFile(theFile))
 					return false;
 
 				// possibly send this file right through to the assembler by firing Run->Assemble's
 				// actionPerformed() method.
-				if(theFile.canRead() && Globals.getSettings().getAssembleOnOpenEnabled())
+				if (theFile.canRead() && Globals.getSettings().getAssembleOnOpenEnabled())
 					mainUI.getRunAssembleAction().actionPerformed(null);
 			}
 			return true;
@@ -635,53 +520,42 @@ public class EditTabbedPane extends JTabbedPane
 		 * Open the specified file.  Return true if file opened, false otherwise
 		 */
 
-		private boolean openFile(File theFile)
-		{
-			try
-			{
+		private boolean openFile(File theFile) {
+			try {
 				theFile = theFile.getCanonicalFile();
-			}
-			catch(IOException ioe)
-			{
+			} catch (IOException ioe) {
 				// nothing to do, theFile will keep current value
 			}
 			String currentFilePath = theFile.getPath();
 			// If this file is currently already open, then simply select its tab
 			EditPane editPane = getEditPaneForFile(currentFilePath);
-			if(editPane != null)
-			{
+			if (editPane != null) {
 				setSelectedComponent(editPane);
 				//updateTitlesAndMenuState(editPane);
 				updateTitles(editPane);
 				return false;
-			}
-			else
+			} else
 				editPane = new EditPane(mainUI);
 			editPane.setPathname(currentFilePath);
 			//FileStatus.reset();
 			FileStatus.setName(currentFilePath);
 			FileStatus.setFile(theFile);
-			FileStatus.set(FileStatus.OPENING);// DPS 9-Aug-2011
-			if(theFile.canRead())
-			{
+			FileStatus.set(FileStatus.OPENING);// 9-Aug-2011
+			if (theFile.canRead()) {
 				Globals.program = new MIPSprogram();
-				try
-				{
+				try {
 					Globals.program.readSource(currentFilePath);
+				} catch (ProcessingException pe) {
 				}
-				catch(ProcessingException pe)
-				{
-				}
-				// DPS 1 Nov 2006.  Defined a StringBuffer to receive all file contents,
+				// 1 Nov 2006.  Defined a StringBuffer to receive all file contents,
 				// one line at a time, before adding to the Edit pane with one setText.
 				// StringBuffer is preallocated to full filelength to eliminate dynamic
 				// expansion as lines are added to it. Previously, each line was appended
 				// to the Edit pane as it was read, way slower due to dynamic string alloc.
-				StringBuffer fileContents = new StringBuffer((int)theFile.length());
+				StringBuffer fileContents = new StringBuffer((int) theFile.length());
 				int lineNumber = 1;
 				String line = Globals.program.getSourceLine(lineNumber++);
-				while(line != null)
-				{
+				while (line != null) {
 					fileContents.append(line + "\n");
 					line = Globals.program.getSourceLine(lineNumber++);
 				}
@@ -701,10 +575,10 @@ public class EditTabbedPane extends JTabbedPane
 				FileStatus.set(FileStatus.NOT_EDITED);
 
 				// If assemble-all, then allow opening of any file w/o invalidating assembly.
-				// DPS 9-Aug-2011
-				if(Globals.getSettings().getBooleanSetting(mars.Settings.ASSEMBLE_ALL_ENABLED))
+				// 9-Aug-2011
+				if (Globals.getSettings().getBooleanSetting(mars.Settings.ASSEMBLE_ALL_ENABLED))
 					updateTitles(editPane);
-				else  // this was the original code...
+				else // this was the original code...
 				{
 					updateTitlesAndMenuState(editPane);
 					mainPane.getExecutePane().clearPane();
@@ -732,58 +606,49 @@ public class EditTabbedPane extends JTabbedPane
 		// to the previous one, the previous object is modified AND NO PROPERTY CHANGE EVENT
 		// IS FIRED!  I could obviously deal with this situation if I wanted to, but enough
 		// is enough.  The limit will be one alternative filter at a time.
-		// DPS... 9 July 2008
+		// 9 July 2008
 
-		private void setChoosableFileFilters()
-		{
+		private void setChoosableFileFilters() {
 			// See if a new filter has been added to the master list.  If so,
 			// regenerate the fileChooser list from the master list.
-			if(fileFilterCount < fileFilterList.size() ||
-					fileFilterList.size() != fileChooser.getChoosableFileFilters().length)
-			{
+			if (fileFilterCount < fileFilterList.size() ||
+					fileFilterList.size() != fileChooser.getChoosableFileFilters().length) {
 				fileFilterCount = fileFilterList.size();
 				// First, "deactivate" the listener, because our addChoosableFileFilter
 				// calls would otherwise activate it!  We want it to be triggered only
 				// by MARS user action.
 				boolean activeListener = false;
-				if(fileChooser.getPropertyChangeListeners().length > 0)
-				{
+				if (fileChooser.getPropertyChangeListeners().length > 0) {
 					fileChooser.removePropertyChangeListener(listenForUserAddedFileFilter);
-					activeListener = true;  // we'll note this, for re-activation later
+					activeListener = true; // we'll note this, for re-activation later
 				}
 				// clear out the list and populate from our own ArrayList.
 				// Last one added becomes the default.
 				fileChooser.resetChoosableFileFilters();
-				for(int i = 0; i < fileFilterList.size(); i++)
-					fileChooser.addChoosableFileFilter((FileFilter)fileFilterList.get(i));
+				for (int i = 0; i < fileFilterList.size(); i++)
+					fileChooser.addChoosableFileFilter((FileFilter) fileFilterList.get(i));
 				// Restore listener.
-				if(activeListener)
+				if (activeListener)
 					fileChooser.addPropertyChangeListener(listenForUserAddedFileFilter);
 			}
 		}//////////////////////////////////////////////////////////////////////////////////
-		//  Private inner class for special property change listener.  DPS 9 July 2008.
-		//  If user adds a file filter, e.g. by typing *.txt into the file text field then pressing
-		//  Enter, then it is automatically added to the array of choosable file filters.  BUT, unless you
-		//  Cancel out of the Open dialog, it is then REMOVED from the list automatically also. Here
-		//  we will achieve a sort of persistence at least through the current activation of MARS.
+			//  Private inner class for special property change listener.  9 July 2008.
+			//  If user adds a file filter, e.g. by typing *.txt into the file text field then pressing
+			//  Enter, then it is automatically added to the array of choosable file filters.  BUT, unless you
+			//  Cancel out of the Open dialog, it is then REMOVED from the list automatically also. Here
+			//  we will achieve a sort of persistence at least through the current activation of MARS.
 
-		private class ChoosableFileFilterChangeListener implements PropertyChangeListener
-		{
-			public void propertyChange(java.beans.PropertyChangeEvent e)
-			{
-				if(e.getPropertyName() == JFileChooser.CHOOSABLE_FILE_FILTER_CHANGED_PROPERTY)
-				{
+		private class ChoosableFileFilterChangeListener implements PropertyChangeListener {
+			public void propertyChange(java.beans.PropertyChangeEvent e) {
+				if (e.getPropertyName() == JFileChooser.CHOOSABLE_FILE_FILTER_CHANGED_PROPERTY) {
 					FileFilter[] newFilters = (FileFilter[]) e.getNewValue();
-					FileFilter[] oldFilters = (FileFilter[]) e.getOldValue();
-					if(newFilters.length > fileFilterList.size())
-					{
+					if (newFilters.length > fileFilterList.size()) {
 						// new filter added, so add to end of master list.
 						fileFilterList.add(newFilters[newFilters.length - 1]);
 					}
 				}
 			}
 		}
-
 
 	}
 

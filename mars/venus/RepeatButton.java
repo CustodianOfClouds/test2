@@ -1,15 +1,11 @@
 package mars.venus;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
-import javax.swing.*;
-import javax.swing.event.*;
 
-/////////////////////////////  CREDIT  /////////////////////////////////////
-// http://forums.sun.com/thread.jspa?threadID=499183&messageID=2505646
-// bsampieri, 4 March 2004
-// Java Developer Forum, Useful Code of the Day: Button Fires Events While Held
-// Adopted/adapted by DPS 20 July 2008
+import java.awt.event.*;
+import javax.swing.*;
+
+//////////////////////////////////////////////////////////////////
+// Button Fires Events While Held
+// Adopted/adapted 20 July 2008
 //
 // This is NOT one of the MARS buttons!  It is a subclass of JButton that can
 // be used to create buttons that fire events after being held down for a
@@ -33,9 +29,9 @@ import javax.swing.event.*;
  * firing anyway, except to process all ActionListeners internally.  But
  * realistically, it probably doesn't matter.
  */
+@SuppressWarnings("deprecation")
 public class RepeatButton extends JButton
-	implements ActionListener, MouseListener
-{
+		implements ActionListener, MouseListener {
 	/**
 	 * The pressed state for this button.
 	 */
@@ -53,7 +49,6 @@ public class RepeatButton extends JButton
 	 */
 	private Timer timer = null;
 
-
 	/**
 	 * The initial delay for this button.  Hold-down time before first
 	 * timer firing.  In milliseconds.
@@ -66,8 +61,6 @@ public class RepeatButton extends JButton
 	 */
 	private int delay = 60;
 
-
-
 	/**
 	 * Holder of the modifiers used when the mouse pressed the button.
 	 * This is used for subsequently fired action events.  This may change
@@ -79,8 +72,7 @@ public class RepeatButton extends JButton
 	/**
 	 * Creates a button with no set text or icon.
 	 */
-	public RepeatButton()
-	{
+	public RepeatButton() {
 		super();
 		init();
 	}
@@ -90,8 +82,7 @@ public class RepeatButton extends JButton
 	 *
 	 * @param  a  the button action
 	 */
-	public RepeatButton(Action a)
-	{
+	public RepeatButton(Action a) {
 		super(a);
 		init();
 	}
@@ -101,8 +92,7 @@ public class RepeatButton extends JButton
 	 *
 	 * @param  icon  the button icon
 	 */
-	public RepeatButton(Icon icon)
-	{
+	public RepeatButton(Icon icon) {
 		super(icon);
 		init();
 	}
@@ -112,8 +102,7 @@ public class RepeatButton extends JButton
 	 *
 	 * @param  text  the button text
 	 */
-	public RepeatButton(String text)
-	{
+	public RepeatButton(String text) {
 		super(text);
 		init();
 	}
@@ -124,8 +113,7 @@ public class RepeatButton extends JButton
 	 * @param  text  the button text
 	 * @param  icon  the button icon
 	 */
-	public RepeatButton(String text, Icon icon)
-	{
+	public RepeatButton(String text, Icon icon) {
 		super(text, icon);
 		init();
 	}
@@ -133,8 +121,7 @@ public class RepeatButton extends JButton
 	/**
 	 * Initializes the button.
 	 */
-	private void init()
-	{
+	private void init() {
 		this.addMouseListener(this);
 		// initialize timers for button holding...
 		this.timer = new Timer(this.delay, this);
@@ -146,8 +133,7 @@ public class RepeatButton extends JButton
 	 *
 	 * @return  the delay
 	 */
-	public int getDelay()
-	{
+	public int getDelay() {
 		return this.delay;
 	}
 
@@ -156,8 +142,7 @@ public class RepeatButton extends JButton
 	 *
 	 * @param  d  the delay
 	 */
-	public void setDelay(int d)
-	{
+	public void setDelay(int d) {
 		this.delay = d;
 	}
 
@@ -166,8 +151,7 @@ public class RepeatButton extends JButton
 	 *
 	 * @return  the initial delay
 	 */
-	public int getInitialDelay()
-	{
+	public int getInitialDelay() {
 		return this.initialDelay;
 	}
 
@@ -176,8 +160,7 @@ public class RepeatButton extends JButton
 	 *
 	 * @param  d  the initial delay
 	 */
-	public void setInitialDelay(int d)
-	{
+	public void setInitialDelay(int d) {
 		this.initialDelay = d;
 	}
 
@@ -188,8 +171,7 @@ public class RepeatButton extends JButton
 	 *
 	 * @return  if true, the button should fire events when held
 	 */
-	public boolean isRepeatEnabled()
-	{
+	public boolean isRepeatEnabled() {
 		return this.repeatEnabled;
 	}
 
@@ -201,12 +183,10 @@ public class RepeatButton extends JButton
 	 *
 	 * @param  en  if true, the button should fire events when held
 	 */
-	public void setRepeatEnabled(boolean en)
-	{
-		if(!en)
-		{
+	public void setRepeatEnabled(boolean en) {
+		if (!en) {
 			this.pressed = false;
-			if(timer.isRunning())
+			if (timer.isRunning())
 				timer.stop();
 		}
 		this.repeatEnabled = en;
@@ -218,12 +198,10 @@ public class RepeatButton extends JButton
 	 *
 	 * @param  en  if true, enables the button
 	 */
-	public void setEnabled(boolean en)
-	{
-		if(en != super.isEnabled())
-		{
+	public void setEnabled(boolean en) {
+		if (en != super.isEnabled()) {
 			this.pressed = false;
-			if(timer.isRunning())
+			if (timer.isRunning())
 				timer.stop();
 		}
 		super.setEnabled(en);
@@ -234,18 +212,16 @@ public class RepeatButton extends JButton
 	 *
 	 * @param  ae  the action event
 	 */
-	public void actionPerformed(ActionEvent ae)
-	{
+	public void actionPerformed(ActionEvent ae) {
 		// process events only from this components
-		if(ae.getSource() == this.timer)
-		{
+		if (ae.getSource() == this.timer) {
 			ActionEvent event = new ActionEvent(
-				this, ActionEvent.ACTION_PERFORMED,
-				super.getActionCommand(), this.modifiers);
+					this, ActionEvent.ACTION_PERFORMED,
+					super.getActionCommand(), this.modifiers);
 			super.fireActionPerformed(event);
 		}
 		// testing code...
-		else if(testing && ae.getSource() == this)
+		else if (testing && ae.getSource() == this)
 			System.out.println(ae.getActionCommand());
 	}
 
@@ -254,13 +230,11 @@ public class RepeatButton extends JButton
 	 *
 	 * @param  me  the mouse event
 	 */
-	public void mouseClicked(MouseEvent me)
-	{
+	public void mouseClicked(MouseEvent me) {
 		// process events only from this components
-		if(me.getSource() == this)
-		{
+		if (me.getSource() == this) {
 			this.pressed = false;
-			if(this.timer.isRunning())
+			if (this.timer.isRunning())
 				this.timer.stop();
 		}
 	}
@@ -270,14 +244,11 @@ public class RepeatButton extends JButton
 	 *
 	 * @param  me  the mouse event
 	 */
-	public void mousePressed(MouseEvent me)
-	{
+	public void mousePressed(MouseEvent me) {
 		// process events only from this components
-		if(me.getSource() == this && this.isEnabled() && this.isRepeatEnabled())
-		{
+		if (me.getSource() == this && this.isEnabled() && this.isRepeatEnabled()) {
 			this.pressed = true;
-			if(!this.timer.isRunning())
-			{
+			if (!this.timer.isRunning()) {
 				this.modifiers = me.getModifiers();
 				this.timer.setInitialDelay(this.initialDelay);
 				this.timer.start();
@@ -290,13 +261,11 @@ public class RepeatButton extends JButton
 	 *
 	 * @param  me  the mouse event
 	 */
-	public void mouseReleased(MouseEvent me)
-	{
+	public void mouseReleased(MouseEvent me) {
 		// process events only from this components
-		if(me.getSource() == this)
-		{
+		if (me.getSource() == this) {
 			this.pressed = false;
-			if(this.timer.isRunning())
+			if (this.timer.isRunning())
 				this.timer.stop();
 		}
 	}
@@ -306,13 +275,10 @@ public class RepeatButton extends JButton
 	 *
 	 * @param  me  the mouse event
 	 */
-	public void mouseEntered(MouseEvent me)
-	{
+	public void mouseEntered(MouseEvent me) {
 		// process events only from this components
-		if(me.getSource() == this && this.isEnabled() && this.isRepeatEnabled())
-		{
-			if(this.pressed && !this.timer.isRunning())
-			{
+		if (me.getSource() == this && this.isEnabled() && this.isRepeatEnabled()) {
+			if (this.pressed && !this.timer.isRunning()) {
 				this.modifiers = me.getModifiers();
 				this.timer.setInitialDelay(this.delay);
 				this.timer.start();
@@ -325,12 +291,10 @@ public class RepeatButton extends JButton
 	 *
 	 * @param  me  the mouse event
 	 */
-	public void mouseExited(MouseEvent me)
-	{
+	public void mouseExited(MouseEvent me) {
 		// process events only from this components
-		if(me.getSource() == this)
-		{
-			if(this.timer.isRunning())
+		if (me.getSource() == this) {
+			if (this.timer.isRunning())
 				this.timer.stop();
 		}
 	}
@@ -345,8 +309,7 @@ public class RepeatButton extends JButton
 	 *
 	 * @param  args  the command-line arguments
 	 */
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) {
 		testing = true;
 		JFrame f = new JFrame("RepeatButton Test");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

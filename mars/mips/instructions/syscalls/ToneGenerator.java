@@ -1,52 +1,20 @@
 
 package mars.mips.instructions.syscalls;
 
-
 import javax.sound.midi.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-/*
-Copyright (c) 2003-2007,  Pete Sanderson and Kenneth Vollmar
-
-Developed by Pete Sanderson (psanderson@otterbein.edu)
-and Kenneth Vollmar (kenvollmar@missouristate.edu)
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject
-to the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-(MIT license, http://www.opensource.org/licenses/mit-license.html)
- */
-
-
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 //
-//  The ToneGenerator and Tone classes were developed by Otterbein College
-//  student Tony Brock in July 2007.  They simulate MIDI output through the
+//  The ToneGenerator and Tone classes simulate MIDI output through the
 //  computers soundcard using classes and methods of the javax.sound.midi
 //  package.
 //
-//  Max Hailperin <max@gustavus.edu> changed the interface of the
-//  ToneGenerator class 2009-10-19 in order to
+// The interface
 //  (1) provide a reliable way to wait for the completion of a
 //       synchronous tone,
 //  and while he was at it,
@@ -57,12 +25,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 /////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-
 /*
  * Creates a Tone object and passes it to a thread to "play" it using MIDI.
  */
-class ToneGenerator
-{
+class ToneGenerator {
 
 	/**
 	* The default pitch value for the tone: 60 / middle C.
@@ -102,8 +68,7 @@ class ToneGenerator
 	* Tone (MIDI velocity) represented by a positive byte value (0-127).
 	*/
 	public static void generateTone(byte pitch, int duration,
-							 byte instrument, byte volume)
-	{
+			byte instrument, byte volume) {
 		Runnable tone = new Tone(pitch, duration, instrument, volume);
 		threadPool.execute(tone);
 	}
@@ -124,22 +89,19 @@ class ToneGenerator
 	* Tone (MIDI velocity) represented by a positive byte value (0-127).
 	*/
 	public static void generateToneSynchronously(byte pitch, int duration,
-										  byte instrument, byte volume)
-	{
+			byte instrument, byte volume) {
 		Runnable tone = new Tone(pitch, duration, instrument, volume);
 		tone.run();
 	}
 
 }
 
-
 /**
  * Contains important variables for a MIDI Tone: pitch, duration
  * instrument (patch), and volume.  The tone can be passed to a thread
  * and will be played using MIDI.
  */
-class Tone implements Runnable
-{
+class Tone implements Runnable {
 
 	/**
 	* Tempo of the tone is in milliseconds: 1000 beats per second.
@@ -172,8 +134,7 @@ class Tone implements Runnable
 	* volume of the initial attack of the note (MIDI velocity).  127 being
 	* loud, and 0 being silent.
 	*/
-	public Tone(byte pitch, int duration, byte instrument, byte volume)
-	{
+	public Tone(byte pitch, int duration, byte instrument, byte volume) {
 		this.pitch = pitch;
 		this.duration = duration;
 		this.instrument = instrument;
@@ -183,8 +144,7 @@ class Tone implements Runnable
 	/**
 	* Plays the tone.
 	*/
-	public void run()
-	{
+	public void run() {
 		playToneNew();
 	}
 
@@ -208,27 +168,19 @@ class Tone implements Runnable
 	private static Synthesizer synth = null;
 	private static MidiChannel channel = null;
 
-	private static boolean openSynthesizer()
-	{
-		if(synth == null)
-		{
-			try
-			{
+	private static boolean openSynthesizer() {
+		if (synth == null) {
+			try {
 				openLock.lock();
-				try
-				{
+				try {
 					Synthesizer s = MidiSystem.getSynthesizer();
 					s.open();
 					channel = s.getChannels()[0];
 					synth = s;
-				}
-				finally
-				{
+				} finally {
 					openLock.unlock();
 				}
-			}
-			catch(MidiUnavailableException mue)
-			{
+			} catch (MidiUnavailableException mue) {
 				mue.printStackTrace();
 				return false;
 			}
@@ -237,109 +189,32 @@ class Tone implements Runnable
 		return true;
 	}
 
-	private void playToneNew()
-	{
-		if(openSynthesizer())
-		{
+	private void playToneNew() {
+		if (openSynthesizer()) {
 			channel.programChange(this.instrument);
 			channel.noteOn(this.pitch, this.volume);
-			try { Thread.sleep(this.duration); } catch(InterruptedException e) {}
+			try {
+				Thread.sleep(this.duration);
+			} catch (InterruptedException e) {
+			}
 			channel.noteOff(this.pitch);
-		}
-	}
-
-
-	private void playTone()
-	{
-
-		try
-		{
-			Sequencer player = null;
-			openLock.lock();
-			try
-			{
-				player = MidiSystem.getSequencer();
-				player.open();
-			}
-			finally
-			{
-				openLock.unlock();
-			}
-
-			Sequence seq = new Sequence(Sequence.PPQ, 1);
-			player.setTempoInMPQ(TEMPO);
-			Track	t = seq.createTrack();
-
-			//select instrument
-			ShortMessage inst = new ShortMessage();
-			inst.setMessage(ShortMessage.PROGRAM_CHANGE, DEFAULT_CHANNEL, instrument, 0);
-			MidiEvent instChange = new MidiEvent(inst, 0);
-			t.add(instChange);
-
-			ShortMessage on = new ShortMessage();
-			on.setMessage(ShortMessage.NOTE_ON, DEFAULT_CHANNEL, pitch, volume);
-			MidiEvent noteOn = new MidiEvent(on, 0);
-			t.add(noteOn);
-
-			ShortMessage off = new ShortMessage();
-			off.setMessage(ShortMessage.NOTE_OFF, DEFAULT_CHANNEL, pitch, volume);
-			MidiEvent noteOff = new MidiEvent(off, duration);
-			t.add(noteOff);
-
-			player.setSequence(seq);
-
-			/* The EndOfTrackListener was added 2009-10-19 by Max
-			 * Hailperin <max@gustavus.edu> so that its
-			 * awaitEndOfTrack method could be used as a more reliable
-			 * replacement for Thread.sleep.  (Given that the tone
-			 * might not start playing right away, the sleep could end
-			 * before the tone, clipping off the end of the tone.) */
-			EndOfTrackListener eot = new EndOfTrackListener();
-			player.addMetaEventListener(eot);
-
-			player.start();
-
-			try
-			{
-				eot.awaitEndOfTrack();
-			}
-			catch(InterruptedException ex)
-			{
-			}
-			finally
-			{
-				player.close();
-			}
-
-		}
-		catch(MidiUnavailableException mue)
-		{
-			mue.printStackTrace();
-		}
-		catch(InvalidMidiDataException imde)
-		{
-			imde.printStackTrace();
 		}
 	}
 }
 
-class EndOfTrackListener implements javax.sound.midi.MetaEventListener
-{
+class EndOfTrackListener implements javax.sound.midi.MetaEventListener {
 
 	private boolean endedYet = false;
 
-	public synchronized void meta(javax.sound.midi.MetaMessage m)
-	{
-		if(m.getType() == 47)
-		{
+	public synchronized void meta(javax.sound.midi.MetaMessage m) {
+		if (m.getType() == 47) {
 			endedYet = true;
 			notifyAll();
 		}
 	}
 
-	public synchronized void awaitEndOfTrack() throws InterruptedException
-	{
-		while(!endedYet)
+	public synchronized void awaitEndOfTrack() throws InterruptedException {
+		while (!endedYet)
 			wait();
 	}
 }

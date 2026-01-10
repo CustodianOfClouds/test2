@@ -1,12 +1,3 @@
-/*
- * DefaultInputHandler.java - Default implementation of an input handler
- * Copyright (C) 1999 Slava Pestov
- *
- * You may use and modify this package for any purpose. Redistribution is
- * permitted, in both source and binary form, provided that this notice
- * remains intact in all source distributions of this package.
- */
-
 package mars.venus.editors.jeditsyntax;
 
 import javax.swing.KeyStroke;
@@ -14,29 +5,26 @@ import java.awt.event.*;
 import java.awt.Toolkit;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
-import java.util.Properties;
 
 /**
  * The default input handler. It maps sequences of keystrokes into actions
  * and inserts key typed events into the text area.
- * @author Slava Pestov
- * @version $Id: DefaultInputHandler.java,v 1.18 1999/12/13 03:40:30 sp Exp $
+ * @author CC
+ * @version the big 26
  */
-public class DefaultInputHandler extends InputHandler
-{
+@SuppressWarnings({ "deprecation", "rawtypes", "unchecked" })
+public class DefaultInputHandler extends InputHandler {
 	/**
 	 * Creates a new input handler with no key bindings defined.
 	 */
-	public DefaultInputHandler()
-	{
+	public DefaultInputHandler() {
 		bindings = currentBindings = new Hashtable();
 	}
 
 	/**
 	 * Sets up the default key bindings.
 	 */
-	public void addDefaultKeyBindings()
-	{
+	public void addDefaultKeyBindings() {
 		addKeyBinding("BACK_SPACE", BACKSPACE);
 		addKeyBinding("S+BACK_SPACE", BACKSPACE);
 		addKeyBinding("C+BACK_SPACE", BACKSPACE_WORD);
@@ -111,30 +99,25 @@ public class DefaultInputHandler extends InputHandler
 	 * @param keyBinding The key binding
 	 * @param action The action
 	 */
-	public void addKeyBinding(String keyBinding, ActionListener action)
-	{
+	public void addKeyBinding(String keyBinding, ActionListener action) {
 		Hashtable current = bindings;
 
 		StringTokenizer st = new StringTokenizer(keyBinding);
-		while(st.hasMoreTokens())
-		{
+		while (st.hasMoreTokens()) {
 			KeyStroke keyStroke = parseKeyStroke(st.nextToken());
-			if(keyStroke == null)
+			if (keyStroke == null)
 				return;
 
-			if(st.hasMoreTokens())
-			{
+			if (st.hasMoreTokens()) {
 				Object o = current.get(keyStroke);
-				if(o instanceof Hashtable)
-					current = (Hashtable)o;
-				else
-				{
+				if (o instanceof Hashtable)
+					current = (Hashtable) o;
+				else {
 					o = new Hashtable();
 					current.put(keyStroke, o);
-					current = (Hashtable)o;
+					current = (Hashtable) o;
 				}
-			}
-			else
+			} else
 				current.put(keyStroke, action);
 		}
 	}
@@ -144,16 +127,14 @@ public class DefaultInputHandler extends InputHandler
 	 * implemented.
 	 * @param keyBinding The key binding
 	 */
-	public void removeKeyBinding(String keyBinding)
-	{
+	public void removeKeyBinding(String keyBinding) {
 		throw new InternalError("Not yet implemented");
 	}
 
 	/**
 	 * Removes all key bindings from this input handler.
 	 */
-	public void removeAllKeyBindings()
-	{
+	public void removeAllKeyBindings() {
 		bindings.clear();
 	}
 
@@ -162,8 +143,7 @@ public class DefaultInputHandler extends InputHandler
 	 * key bindings. Setting key bindings in the copy will also
 	 * set them in the original.
 	 */
-	public InputHandler copy()
-	{
+	public InputHandler copy() {
 		return new DefaultInputHandler(this);
 	}
 
@@ -171,17 +151,16 @@ public class DefaultInputHandler extends InputHandler
 	 * Handle a key pressed event. This will look up the binding for
 	 * the key stroke and execute it.
 	 */
-	public void keyPressed(KeyEvent evt)
-	{
+	public void keyPressed(KeyEvent evt) {
 		int keyCode = evt.getKeyCode();
 		int modifiers = evt.getModifiers();
-		if(keyCode == KeyEvent.VK_CONTROL ||
+		if (keyCode == KeyEvent.VK_CONTROL ||
 				keyCode == KeyEvent.VK_SHIFT ||
 				keyCode == KeyEvent.VK_ALT ||
 				keyCode == KeyEvent.VK_META)
 			return;
 
-		if((modifiers & ~KeyEvent.SHIFT_MASK) != 0
+		if ((modifiers & ~KeyEvent.SHIFT_MASK) != 0
 				|| evt.isActionKey()
 				|| keyCode == KeyEvent.VK_BACK_SPACE
 				|| keyCode == KeyEvent.VK_DELETE
@@ -189,10 +168,8 @@ public class DefaultInputHandler extends InputHandler
 				|| keyCode == KeyEvent.VK_TAB
 				|| keyCode == KeyEvent.VK_SPACE
 				|| keyCode == KeyEvent.VK_SLASH
-				|| keyCode == KeyEvent.VK_ESCAPE)
-		{
-			if(grabAction != null)
-			{
+				|| keyCode == KeyEvent.VK_ESCAPE) {
+			if (grabAction != null) {
 				handleGrabAction(evt);
 				return;
 			}
@@ -200,14 +177,12 @@ public class DefaultInputHandler extends InputHandler
 			KeyStroke keyStroke = KeyStroke.getKeyStroke(keyCode, modifiers);
 			Object o = currentBindings.get(keyStroke);
 
-			if(o == null)
-			{
+			if (o == null) {
 				// Don't beep if the user presses some
 				// key we don't know about unless a
 				// prefix is active. Otherwise it will
 				// beep when caps lock is pressed, etc.
-				if(currentBindings != bindings)
-				{
+				if (currentBindings != bindings) {
 					Toolkit.getDefaultToolkit().beep();
 					// F10 should be passed on, but C+e F10
 					// shouldn't
@@ -217,23 +192,19 @@ public class DefaultInputHandler extends InputHandler
 				}
 				currentBindings = bindings;
 				// No binding for this keyStroke, pass it to menu
-				// (mnemonic, accelerator).  DPS 4-may-2010
+				// (mnemonic, accelerator). 4-may-2010
 				mars.Globals.getGui().dispatchEventToMenu(evt);
 				evt.consume();
 				return;
-			}
-			else if(o instanceof ActionListener)
-			{
+			} else if (o instanceof ActionListener) {
 				currentBindings = bindings;
-				executeAction(((ActionListener)o),
-							  evt.getSource(), null);
+				executeAction(((ActionListener) o),
+						evt.getSource(), null);
 
 				evt.consume();
 				return;
-			}
-			else if(o instanceof Hashtable)
-			{
-				currentBindings = (Hashtable)o;
+			} else if (o instanceof Hashtable) {
+				currentBindings = (Hashtable) o;
 				evt.consume();
 				return;
 			}
@@ -243,55 +214,47 @@ public class DefaultInputHandler extends InputHandler
 	/**
 	 * Handle a key typed event. This inserts the key into the text area.
 	 */
-	public void keyTyped(KeyEvent evt)
-	{
+	public void keyTyped(KeyEvent evt) {
 		int modifiers = evt.getModifiers();
 		char c = evt.getKeyChar();
 
 		// Filter out Ctrl+/ which is handled elsewhere for comment/uncomment
-		if(c == '/' && (modifiers & KeyEvent.CTRL_MASK) != 0)
+		if (c == '/' && (modifiers & KeyEvent.CTRL_MASK) != 0)
 			return;
 
 		// Filter out Alt key combinations used for menu shortcuts (e.g. Alt+F for File menu)
 		// but allow regular characters to be typed
-		if(c != KeyEvent.CHAR_UNDEFINED && (modifiers & KeyEvent.ALT_MASK) == 0)
-		{
-			if(c > 0x20 && c != 0x7f)
-			{
+		if (c != KeyEvent.CHAR_UNDEFINED && (modifiers & KeyEvent.ALT_MASK) == 0) {
+			if (c > 0x20 && c != 0x7f) {
 				KeyStroke keyStroke = KeyStroke.getKeyStroke(Character.toUpperCase(c));
 				Object o = currentBindings.get(keyStroke);
 
-				if(o instanceof Hashtable)
-				{
-					currentBindings = (Hashtable)o;
+				if (o instanceof Hashtable) {
+					currentBindings = (Hashtable) o;
 					return;
-				}
-				else if(o instanceof ActionListener)
-				{
+				} else if (o instanceof ActionListener) {
 					currentBindings = bindings;
-					executeAction((ActionListener)o,
-								  evt.getSource(),
-								  String.valueOf(c));
+					executeAction((ActionListener) o,
+							evt.getSource(),
+							String.valueOf(c));
 					return;
 				}
 
 				currentBindings = bindings;
 
-				if(grabAction != null)
-				{
+				if (grabAction != null) {
 					handleGrabAction(evt);
 					return;
 				}
 
 				// 0-9 adds another 'digit' to the repeat number
-				if(repeat && Character.isDigit(c))
-				{
+				if (repeat && Character.isDigit(c)) {
 					repeatCount *= 10;
 					repeatCount += (c - '0');
 					return;
 				}
 				executeAction(INSERT_CHAR, evt.getSource(),
-							  String.valueOf(evt.getKeyChar()));
+						String.valueOf(evt.getKeyChar()));
 				repeatCount = 0;
 				repeat = false;
 			}
@@ -307,19 +270,15 @@ public class DefaultInputHandler extends InputHandler
 	 * the <code>VK_</code> prefix.
 	 * @param keyStroke A string description of the key stroke
 	 */
-	public static KeyStroke parseKeyStroke(String keyStroke)
-	{
-		if(keyStroke == null)
+	public static KeyStroke parseKeyStroke(String keyStroke) {
+		if (keyStroke == null)
 			return null;
 		int modifiers = 0;
 		int index = keyStroke.indexOf('+');
-		if(index != -1)
-		{
-			for(int i = 0; i < index; i++)
-			{
-				switch(Character.toUpperCase(keyStroke
-											 .charAt(i)))
-				{
+		if (index != -1) {
+			for (int i = 0; i < index; i++) {
+				switch (Character.toUpperCase(keyStroke
+						.charAt(i))) {
 					case 'A':
 						modifiers |= InputEvent.ALT_MASK;
 						break;
@@ -336,32 +295,24 @@ public class DefaultInputHandler extends InputHandler
 			}
 		}
 		String key = keyStroke.substring(index + 1);
-		if(key.length() == 1)
-		{
+		if (key.length() == 1) {
 			char ch = Character.toUpperCase(key.charAt(0));
-			if(modifiers == 0)
+			if (modifiers == 0)
 				return KeyStroke.getKeyStroke(ch);
 			else
 				return KeyStroke.getKeyStroke(ch, modifiers);
-		}
-		else if(key.length() == 0)
-		{
+		} else if (key.length() == 0) {
 			System.err.println("Invalid key stroke: " + keyStroke);
 			return null;
-		}
-		else
-		{
+		} else {
 			int ch;
 
-			try
-			{
+			try {
 				ch = KeyEvent.class.getField("VK_".concat(key))
-					 .getInt(null);
-			}
-			catch(Exception e)
-			{
+						.getInt(null);
+			} catch (Exception e) {
 				System.err.println("Invalid key stroke: "
-								   + keyStroke);
+						+ keyStroke);
 				return null;
 			}
 
@@ -370,71 +321,68 @@ public class DefaultInputHandler extends InputHandler
 	}
 
 	static final ActionListener INSERT_TAB_OR_INDENT = new insert_tab_or_indent();
+
 	static class insert_tab_or_indent implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
 			JEditTextArea textArea = getTextArea(evt);
 
-			if(textArea.isEditable()) {
+			if (textArea.isEditable()) {
 				// JEB!
-				JEditBasedTextArea jeb = (JEditBasedTextArea)textArea;
+				JEditBasedTextArea jeb = (JEditBasedTextArea) textArea;
 
-				if(jeb != null)
-					jeb.insertTabOrIndent();
-				else
-					textArea.overwriteSetSelectedText("\t");
-			}
-			else
+				jeb.insertTabOrIndent();
+			} else
 				textArea.getToolkit().beep();
 		}
 	}
 
 	static final ActionListener DEDENT = new dedent();
+
 	static class dedent implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
 			JEditTextArea textArea = getTextArea(evt);
 
-			if(textArea.isEditable()) {
+			if (textArea.isEditable()) {
 				// JEB!
-				JEditBasedTextArea jeb = (JEditBasedTextArea)textArea;
+				JEditBasedTextArea jeb = (JEditBasedTextArea) textArea;
 
-				if(jeb != null)
+				if (jeb != null)
 					jeb.dedent();
-			}
-			else
+			} else
 				textArea.getToolkit().beep();
 		}
 	}
 
 	static final ActionListener COMMENT_OR_UNCOMMENT = new comment_or_uncomment();
+
 	static class comment_or_uncomment implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
 			JEditTextArea textArea = getTextArea(evt);
 
-			if(textArea.isEditable()) {
+			if (textArea.isEditable()) {
 				// JEB!
-				JEditBasedTextArea jeb = (JEditBasedTextArea)textArea;
+				JEditBasedTextArea jeb = (JEditBasedTextArea) textArea;
 
-				if(jeb != null)
+				if (jeb != null)
 					jeb.commentOrUncomment();
-			}
-			else
+			} else
 				textArea.getToolkit().beep();
 		}
 	}
 
 	static final ActionListener INSERT_SPACE_OR_YELL = new insert_space_or_yell();
+
 	static class insert_space_or_yell implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
 			JEditTextArea textArea = getTextArea(evt);
 
-			if(textArea.isEditable()) {
+			if (textArea.isEditable()) {
 				// JEB!
-				JEditBasedTextArea jeb = (JEditBasedTextArea)textArea;
+				JEditBasedTextArea jeb = (JEditBasedTextArea) textArea;
 
-				if(jeb != null)
+				if (jeb != null)
 					jeb.insertSpaceOrYell();
-			}
-			else
+			} else
 				textArea.getToolkit().beep();
 		}
 	}
@@ -443,8 +391,7 @@ public class DefaultInputHandler extends InputHandler
 	private Hashtable bindings;
 	private Hashtable currentBindings;
 
-	private DefaultInputHandler(DefaultInputHandler copy)
-	{
+	private DefaultInputHandler(DefaultInputHandler copy) {
 		bindings = currentBindings = copy.bindings;
 	}
 }

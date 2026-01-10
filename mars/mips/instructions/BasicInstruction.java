@@ -1,51 +1,22 @@
 package mars.mips.instructions;
 
-/*
-Copyright (c) 2003-2013,  Pete Sanderson and Kenneth Vollmar
-
-Developed by Pete Sanderson (psanderson@otterbein.edu)
-and Kenneth Vollmar (kenvollmar@missouristate.edu)
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject
-to the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-(MIT license, http://www.opensource.org/licenses/mit-license.html)
- */
-
 /**
  * Class to represent a basic instruction in the MIPS instruction set.
  * Basic instruction means it translates directly to a 32-bit binary machine
  * instruction.
  *
- * @author Pete Sanderson and Ken Vollmar
- * @version August 2003
+ * @author CC
+ * @version the big 26
  */
-public class BasicInstruction extends Instruction
-{
+public class BasicInstruction extends Instruction {
 
-	private String instructionName;
 	private BasicInstructionFormat instructionFormat;
 	private String operationMask;
 	private SimulationCode simulationCode;
 
-	private int opcodeMask;  // integer with 1's where constants required (0/1 become 1, f/s/t become 0)
+	private int opcodeMask; // integer with 1's where constants required (0/1 become 1, f/s/t become 0)
 	private int opcodeMatch; // integer matching constants required (0/1 become 0/1, f/s/t become 0)
+
 	/**
 	 * BasicInstruction constructor.
 	 *
@@ -70,14 +41,13 @@ public class BasicInstruction extends Instruction
 	 * instruction simulator -- it needs to match all and only the 0's and 1's.
 	 */
 	public BasicInstruction(String example, String description, BasicInstructionFormat instrFormat,
-							String operMask, SimulationCode simCode)
-	{
+			String operMask, SimulationCode simCode) {
 		this.exampleFormat = example;
 		this.mnemonic = this.extractOperator(example);
 		this.description = description;
 		this.instructionFormat = instrFormat;
 		this.operationMask = operMask.replaceAll(" ", ""); // squeeze out any/all spaces
-		if(operationMask.length() != Instruction.INSTRUCTION_LENGTH_BITS)
+		if (operationMask.length() != Instruction.INSTRUCTION_LENGTH_BITS)
 			System.out.println(example + " mask not " + Instruction.INSTRUCTION_LENGTH_BITS + " bits!");
 		this.simulationCode = simCode;
 
@@ -88,8 +58,7 @@ public class BasicInstruction extends Instruction
 	// Temporary constructor so that instructions without description yet will compile.
 
 	public BasicInstruction(String example, BasicInstructionFormat instrFormat,
-							String operMask, SimulationCode simCode)
-	{
+			String operMask, SimulationCode simCode) {
 		this(example, "", instrFormat, operMask, simCode);
 	}
 
@@ -102,8 +71,7 @@ public class BasicInstruction extends Instruction
 	 *
 	 * @return The 32 bit mask, as a String
 	 */
-	public String getOperationMask()
-	{
+	public String getOperationMask() {
 		return operationMask;
 	}
 
@@ -118,8 +86,7 @@ public class BasicInstruction extends Instruction
 	 *
 	 * @return The machine instruction format, R, I, J or I-branch.
 	 */
-	public BasicInstructionFormat getInstructionFormat()
-	{
+	public BasicInstructionFormat getInstructionFormat() {
 		return instructionFormat;
 	}
 
@@ -132,18 +99,15 @@ public class BasicInstruction extends Instruction
 	 * @see SimulationCode
 	 **/
 
-	public SimulationCode getSimulationCode()
-	{
+	public SimulationCode getSimulationCode() {
 		return simulationCode;
 	}
 
-	public int getOpcodeMask()
-	{
+	public int getOpcodeMask() {
 		return this.opcodeMask;
 	}
 
-	public int getOpcodeMatch()
-	{
+	public int getOpcodeMatch() {
 		return this.opcodeMatch;
 	}
 }

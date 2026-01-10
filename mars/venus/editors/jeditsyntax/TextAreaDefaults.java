@@ -1,12 +1,3 @@
-/*
- * TextAreaDefaults.java - Encapsulates default values for various settings
- * Copyright (C) 1999 Slava Pestov
- *
- * You may use and modify this package for any purpose. Redistribution is
- * permitted, in both source and binary form, provided that this notice
- * remains intact in all source distributions of this package.
- */
-
 package mars.venus.editors.jeditsyntax;
 
 import mars.Settings;
@@ -19,8 +10,7 @@ import java.awt.Color;
  * The advantage of doing this over calling lots of set() methods after
  * creating the text area is that this method is faster.
  */
-public class TextAreaDefaults
-{
+public class TextAreaDefaults {
 	private static TextAreaDefaults DEFAULTS;
 
 	public InputHandler inputHandler;
@@ -53,8 +43,7 @@ public class TextAreaDefaults
 	 * Returns a new TextAreaDefaults object with the default values filled
 	 * in.
 	 */
-	public static TextAreaDefaults getDefaults()
-	{
+	public static TextAreaDefaults getDefaults() {
 		DEFAULTS = new TextAreaDefaults();
 
 		DEFAULTS.inputHandler = new DefaultInputHandler();
@@ -74,7 +63,8 @@ public class TextAreaDefaults
 		DEFAULTS.caretColor = Color.black; // Color.red;
 		DEFAULTS.selectionColor = new Color(0xccccff);
 		DEFAULTS.lineHighlightColor = new Color(0xeeeeee);//0xe0e0e0);
-		DEFAULTS.lineHighlight = mars.Globals.getSettings().getBooleanSetting(Settings.EDITOR_CURRENT_LINE_HIGHLIGHTING);
+		DEFAULTS.lineHighlight = mars.Globals.getSettings()
+				.getBooleanSetting(Settings.EDITOR_CURRENT_LINE_HIGHLIGHTING);
 		DEFAULTS.bracketHighlightColor = Color.black;
 		DEFAULTS.bracketHighlight = false; // assembly language doesn't need this.
 		DEFAULTS.eolMarkerColor = new Color(0x009999);

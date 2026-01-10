@@ -64,7 +64,7 @@ jpackage ^
   --input "%BUILD_DIR%" ^
   --dest "%BUILD_DIR%" ^
   --name "%APP_NAME%" ^
-  --icon images\mars.ico ^
+  --icon "%CD%\images\mars.ico" ^
   --main-jar "%JAR_NAME%" ^
   --type exe ^
   --app-version "%VERSION%" ^

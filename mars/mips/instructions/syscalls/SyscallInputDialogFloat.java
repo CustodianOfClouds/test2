@@ -1,58 +1,26 @@
 package mars.mips.instructions.syscalls;
-import mars.util.*;
+
 import mars.mips.hardware.*;
-import mars.simulator.*;
 import mars.*;
 import javax.swing.JOptionPane;
-
-/*
-Copyright (c) 2003-2008,  Pete Sanderson and Kenneth Vollmar
-
-Developed by Pete Sanderson (psanderson@otterbein.edu)
-and Kenneth Vollmar (kenvollmar@missouristate.edu)
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject
-to the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-(MIT license, http://www.opensource.org/licenses/mit-license.html)
- */
 
 /**
  * Service to input data.
  *
  */
 
-public class SyscallInputDialogFloat extends AbstractSyscall
-{
+public class SyscallInputDialogFloat extends AbstractSyscall {
 	/**
 	 * Build an instance of the syscall with its default service number and name.
 	 */
-	public SyscallInputDialogFloat()
-	{
+	public SyscallInputDialogFloat() {
 		super(52, "InputDialogFloat");
 	}
 
 	/**
 	* System call to input data.
 	*/
-	public void simulate(ProgramStatement statement) throws ProcessingException
-	{
+	public void simulate(ProgramStatement statement) throws ProcessingException {
 		Globals.inputSyscallLock.lock();
 		try {
 			// Input arguments: $a0 = address of null-terminated string that is the message to user
@@ -64,22 +32,18 @@ public class SyscallInputDialogFloat extends AbstractSyscall
 			//       -2: Cancel was chosen
 			//       -3: OK was chosen but no data had been input into field
 
-
 			String message = new String(); // = "";
 			int byteAddress = RegisterFile.getValue(4);
-			char ch[] = { ' '}; // Need an array to convert to String
-			try
-			{
+			char ch[] = { ' ' }; // Need an array to convert to String
+			try {
 				ch[0] = (char) Globals.memory.getByte(byteAddress);
-				while(ch[0] != 0)  // only uses single location ch[0]
+				while (ch[0] != 0) // only uses single location ch[0]
 				{
 					message = message.concat(new String(ch)); // parameter to String constructor is a char[] array
 					byteAddress++;
 					ch[0] = (char) Globals.memory.getByte(byteAddress);
 				}
-			}
-			catch(AddressErrorException e)
-			{
+			} catch (AddressErrorException e) {
 				throw new ProcessingException(statement, e);
 			}
 
@@ -90,36 +54,31 @@ public class SyscallInputDialogFloat extends AbstractSyscall
 			String inputValue = null;
 			inputValue = JOptionPane.showInputDialog(message);
 
-			try
-			{
-				Coprocessor1.setRegisterToFloat(0, (float)0.0);  // set $f0 to zero
-				if(inputValue == null)   // Cancel was chosen
+			try {
+				Coprocessor1.setRegisterToFloat(0, (float) 0.0); // set $f0 to zero
+				if (inputValue == null) // Cancel was chosen
 				{
-					RegisterFile.updateRegister(3, -2);   // set $v1 to -2 flag
-				}
-				else if(inputValue.length() == 0)   // OK was chosen but there was no input
+					RegisterFile.updateRegister(3, -2); // set $v1 to -2 flag
+				} else if (inputValue.length() == 0) // OK was chosen but there was no input
 				{
-					RegisterFile.updateRegister(3, -3);   // set $v1 to -3 flag
-				}
-				else
-				{
+					RegisterFile.updateRegister(3, -3); // set $v1 to -3 flag
+				} else {
 
 					float floatValue = Float.parseFloat(inputValue);
 
 					//System.out.println("SyscallInputDialogFloat: floatValue is " + floatValue);
 
 					// Successful parse of valid input data
-					Coprocessor1.setRegisterToFloat(0, floatValue);  // set $f0 to input data
-					RegisterFile.updateRegister(3, 0);   // set $v1 to valid flag
+					Coprocessor1.setRegisterToFloat(0, floatValue); // set $f0 to input data
+					RegisterFile.updateRegister(3, 0); // set $v1 to valid flag
 
 				}
 
 			} // end try block
 
-
-			catch(NumberFormatException e)      // Unsuccessful parse of input data
+			catch (NumberFormatException e) // Unsuccessful parse of input data
 			{
-				RegisterFile.updateRegister(3, -1);   // set $v1 to -1 flag
+				RegisterFile.updateRegister(3, -1); // set $v1 to -1 flag
 
 				/*  Don't throw exception because returning a status flag
 				throw new ProcessingException(statement,
