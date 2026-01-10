@@ -620,7 +620,7 @@ public class Memory extends Observable
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 	/**
-	* Copies a range of bytes in MMIO memory without any extra bullshit.
+	* Copies a range of bytes in MMIO memory directly.
 	* assumes address/length are word-aligned for speed.
 	*/
 	public synchronized void copyMMIOFast(int address, int destination, int length) throws AddressErrorException
@@ -686,7 +686,7 @@ public class Memory extends Observable
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 	/**
-	* zeroes out a range of bytes in MMIO memory without any extra bullshit.
+	* zeroes out a range of bytes in MMIO memory directly.
 	* assumes address/length are word-aligned for speed.
 	*/
 	public synchronized void zeroMMIOFast(int address, int length) throws AddressErrorException

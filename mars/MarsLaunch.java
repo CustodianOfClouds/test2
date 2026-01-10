@@ -255,16 +255,11 @@ public class MarsLaunch
 
 	private void launchIDE()
 	{
-		// System.setProperty("apple.laf.useScreenMenuBar", "true"); // Puts MARS menu on Mac OS menu bar
-		// new MarsSplashScreen(splashDuration).showSplash();
 		SwingUtilities.invokeLater(
 			new Runnable()
 		{
 			public void run()
 			{
-				//Turn off metal's use of bold fonts
-				//UIManager.put("swing.boldMetal", Boolean.FALSE);
-				// JB: indicate modified status in title
 				new VenusUI("MARS " + Globals.version);
 			}
 		});

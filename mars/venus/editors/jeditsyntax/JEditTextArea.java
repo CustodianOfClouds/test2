@@ -1122,7 +1122,7 @@ public class JEditTextArea extends JComponent
 		}
 
 		// If the new position is the same as the old, we don't
-		// do all this crap, however we still do the stuff at
+		// update the selection, however we still do the stuff at
 		// the end (clearing magic position, scrolling)
 		if(newStart != selectionStart || newEnd != selectionEnd
 				|| newBias != biasLeft)

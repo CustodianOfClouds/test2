@@ -76,10 +76,10 @@ public class ProcessingException extends Exception
 	 **/
 	public ProcessingException(ProgramStatement ps, String m)
 	{
-		commonCtorBullshit(ps, m);
+		initializeError(ps, m);
 	}
 
-	private void commonCtorBullshit(ProgramStatement ps, String m)
+	private void initializeError(ProgramStatement ps, String m)
 	{
 		errs = new ErrorList();
 		errs.add(new ErrorMessage(ps, "Runtime exception at " +
@@ -105,7 +105,7 @@ public class ProcessingException extends Exception
 		if(cause == Exceptions.BREAKPOINT_EXCEPTION) {
 			isBreakpoint = true;
 		} else {
-			commonCtorBullshit(ps, m);
+			initializeError(ps, m);
 			Exceptions.setRegisters(cause);
 		}
 	}

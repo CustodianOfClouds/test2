@@ -1466,8 +1466,7 @@ public class KeypadAndLEDDisplaySimulator extends AbstractMarsToolAndApplication
 			if(show) {
 				this.setCursor(Cursor.getDefaultCursor());
 			} else {
-				// apparently this is how you hide the cursor. by setting it to a
-				// blank transparent image. lol
+				// Hide the cursor by setting it to a blank transparent image
 				this.setCursor(blankCursor);
 			}
 		}
@@ -1665,7 +1664,7 @@ public class KeypadAndLEDDisplaySimulator extends AbstractMarsToolAndApplication
 				for(int x = 0; x < N_COLUMNS; x++) {
 					// yes, use the transparent color 0 if the index is 0;
 					// the BG color will show through this image if so.
-					// also have to do some Dumb Shit to zero extend the byte
+					// Zero extend the byte to prevent sign extension
 					int colorIndex = fbRam[y*N_COLUMNS + x] & 0xFF;
 
 					int px = (x + fbScx) & FB_SCX_MASK;
@@ -1813,7 +1812,7 @@ public class KeypadAndLEDDisplaySimulator extends AbstractMarsToolAndApplication
 						// get graphics
 						int gfx = tileIndex * BYTES_PER_TILE;
 
-						// draw the damn thing
+						// draw the sprite
 						if(isLarge) {
 							if(hflip) {
 								if(vflip) {
