@@ -86,6 +86,7 @@ public class Simulator extends Observable {
 		// Condition should only be true if run from command-line instead of GUI.
 		// If so, just stick around until execution thread is finished.
 		if (actor == null) {
+			Object dun = simulatorThread.get(); // this should emulate join()
 			ProcessingException pe = simulatorThread.pe;
 			boolean done = simulatorThread.done;
 			if (done)
