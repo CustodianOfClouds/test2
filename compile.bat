@@ -45,12 +45,10 @@ jar cmf mainclass.txt "%BUILD_DIR%\%JAR_NAME%" ^
   Config.properties ^
   Syscall.properties ^
   Settings.properties ^
-  MARSlicense.txt ^
   MipsXRayOpcode.xml ^
   registerDatapath.xml ^
   controlDatapath.xml ^
   ALUcontrolDatapath.xml ^
-  docs ^
   help ^
   images
 if errorlevel 1 goto :error

@@ -35,7 +35,6 @@
 ./mars/assembler/DataTypes.java
 ./mars/assembler/Macro.java
 ./mars/assembler/Token.java
-./mars/MarsSplashScreen.java
 ./mars/util/Binary.java
 ./mars/util/PropertiesFile.java
 ./mars/util/FilenameFinder.java

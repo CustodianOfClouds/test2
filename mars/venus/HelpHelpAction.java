@@ -42,7 +42,6 @@ public class HelpHelpAction extends GuiAction {
 		JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.addTab("MIPS", createMipsHelpInfoPanel());
 		tabbedPane.addTab("MARS", createMarsHelpInfoPanel());
-		tabbedPane.addTab("License", createCopyrightInfoPanel());
 		tabbedPane.addTab("Bugs/Comments", createHTMLHelpPanel("BugReportingHelp.html"));
 		tabbedPane.addTab("Acknowledgements", createHTMLHelpPanel("Acknowledgements.html"));
 		tabbedPane.addTab("Instruction Set Song", createHTMLHelpPanel("MIPSInstructionSetSong.html"));
@@ -111,33 +110,6 @@ public class HelpHelpAction extends GuiAction {
 		}
 		helpPanel.add(helpScrollPane);
 		return helpPanel;
-	}
-
-	// Set up the copyright notice for display.
-	private JPanel createCopyrightInfoPanel() {
-		JPanel marsCopyrightInfo = new JPanel(new BorderLayout());
-		JScrollPane marsCopyrightScrollPane;
-		JEditorPane marsCopyrightDisplay;
-		try {
-			InputStream is = this.getClass().getResourceAsStream("/MARSlicense.txt");
-			BufferedReader in = new BufferedReader(new InputStreamReader(is));
-			String line;
-			StringBuffer text = new StringBuffer("<pre>");
-			while ((line = in.readLine()) != null)
-				text.append(line + "\n");
-			in.close();
-			text.append("</pre>");
-			marsCopyrightDisplay = new JEditorPane("text/html", text.toString());
-			marsCopyrightDisplay.setEditable(false);
-			marsCopyrightDisplay.setCaretPosition(0); // assure top of document displayed
-			marsCopyrightScrollPane = new JScrollPane(marsCopyrightDisplay, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		} catch (Exception ioe) {
-			marsCopyrightScrollPane = new JScrollPane(
-					new JLabel("Error: license contents could not be loaded."));
-		}
-		marsCopyrightInfo.add(marsCopyrightScrollPane);
-		return marsCopyrightInfo;
 	}
 
 	// Set up MARS help tab.  Subtabs get their contents from HTML files.
