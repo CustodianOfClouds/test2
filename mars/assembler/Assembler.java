@@ -201,7 +201,7 @@ public class Assembler {
 			ArrayList<TokenList> tokenLists = fileCurrentlyBeingAssembled.getTokenList();
 			ArrayList<ProgramStatement> parsedList = fileCurrentlyBeingAssembled.createParsedList();
 			// each file keeps its own macro definitions
-			MacroPool macroPool = fileCurrentlyBeingAssembled.createMacroPool();
+			fileCurrentlyBeingAssembled.createMacroPool();
 			// FIRST PASS OF ASSEMBLER VERIFIES SYNTAX, GENERATES SYMBOL TABLE,
 			// INITIALIZES DATA SEGMENT
 			ArrayList<ProgramStatement> statements;
