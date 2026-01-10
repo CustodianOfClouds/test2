@@ -114,7 +114,6 @@ public class Settings extends Observable
 	    execute that code.  */
 	public static final int SELF_MODIFYING_CODE_ENABLED = 20;
 
-	/** JB: added these options. */
 	public static final int CLEAR_RUN_IO_ON_ASSEMBLE = 21;
 	public static final int FUNCTION_LOCAL_LABELS = 22;
 

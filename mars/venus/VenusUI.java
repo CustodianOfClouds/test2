@@ -162,7 +162,7 @@ public class VenusUI extends JFrame
 		this.setHandlers();
 		this.setTaskbarIcon();
 
-		// JB: set the look and feel cause Swing looks terrible
+		// set the look and feel to match the system
 		try
 		{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

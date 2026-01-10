@@ -49,7 +49,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 public  class Coprocessor1
 {
-	// JB: allow registers without dollar sign prefixes for convenience
+	// allow registers without dollar sign prefixes for convenience
 	private static Register [] registers =
 	{
 		new Register("f0", 0, 0),  new Register("f1", 1, 0),

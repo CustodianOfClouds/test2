@@ -181,7 +181,7 @@ public class OperandFormat
 			}
 			if(candType != specType)
 			{
-				// JB: made this error message a biiiiiiit more descriptive
+				// made this error message a biiiiiiit more descriptive
 				generateMessage(candToken, "operand is of incorrect type (expected " + specType + ", got " + candType + ")", errors);
 				return false;
 			}

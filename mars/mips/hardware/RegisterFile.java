@@ -48,7 +48,7 @@ public  class RegisterFile
 	public static final int STACK_POINTER_REGISTER = 29;
 
 	private static Register [] regFile =
-		// JB: allow registers without dollar sign prefixes for convenience
+		// allow registers without dollar sign prefixes for convenience
 	{
 		new Register("zero", 0, 0), new Register("at", 1, 0),
 		new Register("v0", 2, 0), new Register("v1", 3, 0),

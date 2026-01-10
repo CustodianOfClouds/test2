@@ -264,7 +264,6 @@ public class MarsLaunch
 			{
 				//Turn off metal's use of bold fonts
 				//UIManager.put("swing.boldMetal", Boolean.FALSE);
-				// JB: indicate modified status in title
 				new VenusUI("MARS " + Globals.version);
 			}
 		});
