@@ -44,6 +44,11 @@ public class RunGoAction extends GuiAction {
 				executePane.getTextSegmentWindow().unhighlightAllSteps();
 				//FileStatus.set(FileStatus.RUNNING);
 				mainUI.setMenuState(FileStatus.RUNNING);
+				try {
+					int[] breakPoints = executePane.getTextSegmentWindow().getSortedBreakPointsArray();
+					Globals.program.simulateFromPC(breakPoints, maxSteps, this);
+				} catch (ProcessingException pe) {
+				}
 			} else {
 				// This should never occur because at termination the Go and Step buttons are disabled.
 				JOptionPane.showMessageDialog(mainUI,
