@@ -255,7 +255,6 @@ public class MarsLaunch
 
 	private void launchIDE()
 	{
-		// new MarsSplashScreen(splashDuration).showSplash();
 		SwingUtilities.invokeLater(
 			new Runnable()
 		{
