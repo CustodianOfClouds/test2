@@ -229,12 +229,10 @@ public class MIPSprogram
 		this.filename = file;
 		this.sourceList = new ArrayList();
 		ErrorList errors = null;
-		BufferedReader inputFile;
 		String line;
-		int lengthSoFar = 0;
-		try
+
+		try (BufferedReader inputFile = new BufferedReader(new FileReader(file)))
 		{
-			inputFile = new BufferedReader(new FileReader(file));
 			line = inputFile.readLine();
 			while(line != null)
 			{
