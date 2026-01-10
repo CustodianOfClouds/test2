@@ -12,10 +12,9 @@ import mars.mips.hardware.*;
 import mars.simulator.Exceptions;
 
 /*
- Copyright (c) 2009 Jose Baiocchi, 2016-2023 Jarrett Billingsley
+ Copyright (c) 2009 Jose Baiocchi
 
  Developed by Jose Baiocchi (baiocchi@cs.pitt.edu)
- Modified and greatly extended by Jarrett Billingsley (jarrett@cs.pitt.edu)
 
  Permission is hereby granted, free of charge, to any person obtaining
  a copy of this software and associated documentation files (the
@@ -45,7 +44,6 @@ import mars.simulator.Exceptions;
  * AbstractMarsToolAndApplication.
  *
  * @author Jose Baiocchi
- * @author Jarrett Billingsley
  * @version 1.1. 16 February 2010.
  */
 public class KeypadAndLEDDisplaySimulator extends AbstractMarsToolAndApplication {

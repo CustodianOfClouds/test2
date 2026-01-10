@@ -1619,7 +1619,7 @@ public class Settings extends Observable
 //==================================================================================================
 	/* Copyright (c) 2010, Carl Burch. License information is located in the
 	 * com.cburch.logisim.Main source code and at www.cburch.com/logisim/. */
-	// adapted for MARS by Jarrett Billingsley
+	// adapted for MARS
 
 	private RecentFiles recentFiles;
 

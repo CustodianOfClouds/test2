@@ -6,6 +6,7 @@ jpackage ^
 	--main-jar Mars_2254_0111.jar ^
 	--type exe ^
 	--app-version "4.5.54111" ^
-	--vendor "com.jfbillingsley" ^
+	--vendor "ccp" ^
 	--win-menu ^
 	--verbose
+pause
