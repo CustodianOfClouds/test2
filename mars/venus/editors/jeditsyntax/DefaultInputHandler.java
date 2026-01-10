@@ -255,7 +255,7 @@ public class DefaultInputHandler extends InputHandler
 			return;
 
 
-		// lol hax
+		// Filter out Ctrl+/ which is handled elsewhere for comment/uncomment
 		if(c == '/' && (modifiers & KeyEvent.CTRL_MASK) != 0)
 			return;
 

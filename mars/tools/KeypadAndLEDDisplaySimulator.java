@@ -1466,8 +1466,7 @@ public class KeypadAndLEDDisplaySimulator extends AbstractMarsToolAndApplication
 			if(show) {
 				this.setCursor(Cursor.getDefaultCursor());
 			} else {
-				// apparently this is how you hide the cursor. by setting it to a
-				// blank transparent image. lol
+				// Hide the cursor by setting it to a blank transparent image
 				this.setCursor(blankCursor);
 			}
 		}
