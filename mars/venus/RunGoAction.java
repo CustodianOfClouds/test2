@@ -35,7 +35,7 @@ public class RunGoAction extends GuiAction {
 			}
 			if (VenusUI.getReset() || VenusUI.getStarted()) {
 
-				mainUI.setStarted(true); // added 8/27/05
+				VenusUI.setStarted(true); // added 8/27/05
 
 				mainUI.messagesPane.postMarsMessage(
 						name + ": running " + FileStatus.getFile().getName() + "\n\n");
@@ -44,10 +44,15 @@ public class RunGoAction extends GuiAction {
 				executePane.getTextSegmentWindow().unhighlightAllSteps();
 				//FileStatus.set(FileStatus.RUNNING);
 				mainUI.setMenuState(FileStatus.RUNNING);
+				try {
+					int[] breakPoints = executePane.getTextSegmentWindow().getSortedBreakPointsArray();
+					Globals.program.simulateFromPC(breakPoints, maxSteps, this);
+				} catch (ProcessingException pe) {
+				}
 			} else {
 				// This should never occur because at termination the Go and Step buttons are disabled.
 				JOptionPane.showMessageDialog(mainUI,
-						"reset " + VenusUI.getReset() + " started " + VenusUI.getStarted()); //"You must reset before you can execute the program again.");
+						"You must reset before you can execute the program again.");//"reset " + VenusUI.getReset() + " started " + VenusUI.getStarted()); 
 			}
 		} else {
 			// note: this should never occur since "Go" is only enabled after successful assembly.

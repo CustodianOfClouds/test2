@@ -58,11 +58,20 @@ REM Step 4: Build Windows EXE into /build
 REM ================================
 echo.
 echo === Step 4: Build Windows EXE ===
+REM Before jpackage, get absolute path
+for %%I in ("images\truemars.ico") do set "ICON_PATH=%%~fI"
+
+echo Using icon: %ICON_PATH%
+if not exist "%ICON_PATH%" (
+  echo ERROR: Icon not found
+  goto :error
+)
+
 jpackage ^
   --input "%BUILD_DIR%" ^
   --dest "%BUILD_DIR%" ^
   --name "%APP_NAME%" ^
-  --icon "%CD%\images\mars.ico" ^
+  --icon "%ICON_PATH%" ^
   --main-jar "%JAR_NAME%" ^
   --type exe ^
   --app-version "%VERSION%" ^

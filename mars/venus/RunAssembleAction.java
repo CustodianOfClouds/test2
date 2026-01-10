@@ -89,7 +89,7 @@ public class RunAssembleAction extends GuiAction {
 				registersPane.getCoprocessor1Window().clearWindow();
 				registersPane.getCoprocessor0Window().clearWindow();
 				VenusUI.setReset(true);
-				mainUI.setStarted(false);
+				VenusUI.setStarted(false);
 				mainUI.getMainPane().setSelectedComponent(executePane);
 
 				if (Globals.getSettings().getClearRunIOOnAssemble())

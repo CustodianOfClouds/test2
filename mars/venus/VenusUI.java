@@ -1142,7 +1142,7 @@ public class VenusUI extends JFrame {
 	  *   @param b true if the MIPS program execution has started.
 	  **/
 
-	public void setStarted(boolean b) {
+	public static void setStarted(boolean b) {
 		started = b;
 	}
 
