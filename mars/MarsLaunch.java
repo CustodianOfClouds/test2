@@ -48,7 +48,6 @@ public class MarsLaunch {
 	               a 32KB address space with data segment at address 0, or <tt>CompactTextAtZero</tt><br>
 	               for a 32KB address space with text segment at address 0.<br>
 	        me  -- display MARS messages to standard err instead of standard out. Can separate via redirection.</br>
-	        nc  -- do not display copyright notice (for cleaner redirected/piped output).</br>
 			  np  -- No Pseudo-instructions allowed ("ne" will work also).<br>
 			   p  -- Project mode - assemble all files in the same directory as given file.<br>
 		  se<n>  -- terminate MARS with integer exit code <n> if a simulation (run) error occurs.<br>
@@ -219,7 +218,6 @@ public class MarsLaunch {
 	// Returns true if command args parse OK, false otherwise.
 
 	private boolean parseCommandArgs(String[] args) {
-		String noCopyrightSwitch = "nc";
 		String displayMessagesToErrSwitch = "me";
 		boolean argsOK = true;
 		boolean inProgramArgumentList = false;
@@ -251,9 +249,6 @@ public class MarsLaunch {
 			}
 			// messages-to-standard-error switch already processed, so ignore.
 			if (args[i].toLowerCase().equals(displayMessagesToErrSwitch))
-				continue;
-			// no-copyright switch already processed, so ignore.
-			if (args[i].toLowerCase().equals(noCopyrightSwitch))
 				continue;
 			if (args[i].toLowerCase().equals("dump")) {
 				if (args.length <= (i + 3)) {
@@ -728,7 +723,6 @@ public class MarsLaunch {
 		out.println("            memory with text segment at address 0.");
 		out.println("     me  -- display MARS messages to standard err instead of standard out. ");
 		out.println("            Can separate messages from program output using redirection");
-		out.println("     nc  -- do not display copyright notice (for cleaner redirected/piped output).");
 		out.println("     np  -- use of pseudo instructions and formats not permitted");
 		out.println("      p  -- Project mode - assemble all files in the same directory as given file.");
 		out.println("  se<n>  -- terminate MARS with integer exit code <n> if a simulation (run) error occurs.");
